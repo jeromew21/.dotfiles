@@ -2,7 +2,23 @@
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
+(setq-default indent-tabs-mode nil
+              tab-width 4)
+
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode)
+
+(setq scroll-margin 3                ;; start scrolling before reaching the edge
+      scroll-conservatively 101     ;; never recenter unless necessary
+      scroll-step 1                 ;; scroll line-by-line
+      scroll-preserve-screen-position t
+      auto-window-vscroll nil)      ;; reduce CPU use for vertical scrolling
+
+(desktop-save-mode 1)
+
 (tool-bar-mode -1)
+
+(set-frame-font "Inconsolata Nerd Font 16" nil t)
 
 (require 'package)
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -21,6 +37,12 @@
 ;; Project management
 (use-package projectile
   :config (projectile-mode 1))
+
+;; Catpuccin theme
+(use-package catppuccin-theme)
+(load-theme 'catppuccin :no-confirm)
+(setq catppuccin-flavor 'mocha)
+(catppuccin-reload)
 
 ;; Auto-completion
 (use-package company
@@ -59,6 +81,19 @@
   
 ;; File explorer
 (use-package treemacs)
+(global-set-key [f8] 'treemacs)
+(setq treemacs-no-png-images t)  ;; If icons aren't showing properly
+(use-package treemacs-evil)
+(treemacs-project-follow-mode t)
+
+;; Tabbed layout
+(use-package centaur-tabs
+  :demand
+  :config
+  (centaur-tabs-mode t)
+  :bind
+  ("C-<prior>" . centaur-tabs-backward)
+  ("C-<next>" . centaur-tabs-forward))
   
 ;; Git integration
 (use-package magit)
@@ -80,14 +115,10 @@
 (use-package flycheck
  :init (global-flycheck-mode))
 
-;; Catpuccin theme
-(use-package catppuccin-theme)
-(load-theme 'catppuccin :no-confirm)
-
 ;; Optional: Vim keybindings
 (use-package evil
   :config (evil-mode 1))
-  
+ 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
