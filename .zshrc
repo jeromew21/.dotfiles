@@ -21,7 +21,5 @@ RPROMPT='%{$fg[magenta]%}[%*]%{$reset_color%}'
 
 alias ls='ls --color=auto'
 
-source ~/.zsh-autosuggestions/zsh-autosuggestions.zsh
-
 # LAST
 source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
