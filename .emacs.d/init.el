@@ -2,11 +2,15 @@
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
+(load-theme 'catppuccin t)
+
 (setq-default indent-tabs-mode nil
               tab-width 4)
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode)
+
+(setq frame-title-format nil)
 
 (setq scroll-margin 3                ;; start scrolling before reaching the edge
       scroll-conservatively 101     ;; never recenter unless necessary
@@ -19,6 +23,14 @@
 (tool-bar-mode -1)
 
 (set-frame-font "Inconsolata Nerd Font 16" nil t)
+
+(defun my-c++-mode-hook ()
+  (setq c-basic-offset 4)  ;; indentation width
+  (setq tab-width 4)       ;; visual tab width
+  (setq indent-tabs-mode nil)) ;; use spaces instead of tabs
+
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
+(add-hook 'c-mode-hook 'my-c++-mode-hook)
 
 (require 'package)
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -38,12 +50,6 @@
 (use-package projectile
   :config (projectile-mode 1))
 
-;; Catpuccin theme
-(use-package catppuccin-theme)
-(load-theme 'catppuccin :no-confirm)
-(setq catppuccin-flavor 'mocha)
-(catppuccin-reload)
-
 ;; Auto-completion
 (use-package company
   :config (global-company-mode))
@@ -59,7 +65,9 @@
   :commands lsp
   :config
   (setq lsp-prefer-capf t)
-  (setq lsp-enable-snippet t))
+  (setq lsp-enable-snippet t)
+  (setq lsp-enable-semantic-highlighting t)
+  (setq lsp-semantic-tokens-enable t))
   
 ;; LSP UI
 (use-package lsp-ui
@@ -67,17 +75,27 @@
   :config
   (setq lsp-ui-sideline-show-code-actions t
         lsp-ui-doc-enable t))
+
+;; Catpuccin theme
+(use-package catppuccin-theme
+  :init (setq catppuccin-flavor 'mocha)
+  :config
+  (load-theme 'catppuccin :no-confirm)
+  (catppuccin-reload))
   
 ;; Treemacs integration with LSP
 (use-package lsp-treemacs
   :after lsp)
   
 ;; DAP mode (Debugging)
-(use-package dap-mode
-  :after lsp-mode
+;; TODO
+
+;; imenu
+(use-package imenu-list
+  :ensure t
+  :bind ("<f7>" . imenu-list-smart-toggle)
   :config
-  (dap-auto-configure-mode)
-  (require 'dap-lldb))
+  (setq imenu-list-focus-after-activation t))
   
 ;; File explorer
 (use-package treemacs)
@@ -94,6 +112,12 @@
   :bind
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
+
+;; Minimap mode
+(use-package minimap
+  :config
+  (setq minimap-window-location 'right
+        minimap-width-fraction 0.1))
   
 ;; Git integration
 (use-package magit)
@@ -106,6 +130,12 @@
   :hook ((c-mode . (lambda () (add-hook 'before-save-hook #'clang-format-buffer nil t)))
          (c++-mode . (lambda () (add-hook 'before-save-hook #'clang-format-buffer nil t))))
   :config (setq clang-format-style-option "llvm"))
+
+;; vterm integrated terminal
+(use-package vterm
+  :ensure t
+  :bind
+  ("<f9>" . vterm))
   
 ;; Keybinding help
 (use-package which-key

@@ -1,4 +1,6 @@
 /*
 !.gitignore
-!.emacs.d/
 !.emacs.d/init.el
+!.zshrc
+!.zsh-syntax-highlighting
+!.zsh-autosuggestions
