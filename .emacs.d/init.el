@@ -2,7 +2,19 @@
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
+(scroll-bar-mode -1)
+
 (load-theme 'catppuccin t)
+
+(global-unset-key (kbd "C-r"))
+(with-eval-after-load 'evil
+  (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
+
+;; Bind Command + ] to centaur-tabs-forward (instead of C-<next>)
+(global-set-key (kbd "s-]") 'centaur-tabs-forward)
+
+;; Bind Command + [ to centaur-tabs-backward (instead of C-<prior>)
+(global-set-key (kbd "s-[") 'centaur-tabs-backward)
 
 (setq-default indent-tabs-mode nil
               tab-width 4)
@@ -18,11 +30,25 @@
       scroll-preserve-screen-position t
       auto-window-vscroll nil)      ;; reduce CPU use for vertical scrolling
 
+;; Require ending newlines
+(setq require-final-newline t)
+(setq-default indicate-empty-lines t)
+(setq-default mode-require-final-newline t)
+;; optional
+(when (fboundp 'toggle-indicate-empty-lines)
+  (toggle-indicate-empty-lines 1))
+(setq whitespace-style '(face trailing tabs newline empty))
+(global-whitespace-mode 1)
+
 (desktop-save-mode 1)
+
+;; No sound
+(setq visible-bell t)
+(setq ring-bell-function 'ignore)
 
 (tool-bar-mode -1)
 
-(set-frame-font "Inconsolata Nerd Font 16" nil t)
+(set-frame-font "Inconsolata Nerd Font 18" nil t)
 
 (defun my-c++-mode-hook ()
   (setq c-basic-offset 4)  ;; indentation width
@@ -45,6 +71,41 @@
   (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+;; Setup undo-redo
+(use-package undo-tree
+  :init
+  (global-undo-tree-mode)
+  :config
+  (setq undo-tree-auto-save-history nil))  ;; Optional: avoid clutter
+(setq evil-undo-system 'undo-tree)
+
+(use-package doom-modeline
+  :ensure t
+  :init
+  (setq doom-modeline-height 1
+        doom-modeline-bar-width 0
+        doom-modeline-hud nil
+        doom-modeline-icon nil
+        doom-modeline-major-mode-icon nil
+        doom-modeline-major-mode-color-icon nil
+        doom-modeline-buffer-state-icon nil
+        doom-modeline-buffer-modification-icon nil
+        doom-modeline-enable-word-count nil
+        doom-modeline-buffer-encoding nil
+        doom-modeline-env-version nil
+        doom-modeline-time nil
+        doom-modeline-indent-info nil
+        doom-modeline-lsp nil
+        doom-modeline-github nil
+        doom-modeline-github-interval 0
+        doom-modeline-minor-modes nil
+        doom-modeline-persp-name nil
+        doom-modeline-workspace-name nil
+        doom-modeline-checker-simple-format t
+        doom-modeline-vcs-max-length 12)
+  :config
+  (doom-modeline-mode 1))
 
 ;; Project management
 (use-package projectile
@@ -88,7 +149,7 @@
   :after lsp)
   
 ;; DAP mode (Debugging)
-;; TODO
+;; TODO fix it (might just not work outside of Linux)
 
 ;; imenu
 (use-package imenu-list
@@ -144,11 +205,13 @@
 ;; Linting
 (use-package flycheck
  :init (global-flycheck-mode))
-
-;; Optional: Vim keybindings
-(use-package evil
-  :config (evil-mode 1))
  
+;; Evil mode 
+(use-package evil
+  :config
+  (evil-mode 1)
+  (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
