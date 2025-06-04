@@ -6,6 +6,10 @@
 
 (load-theme 'catppuccin t)
 
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-language-environment 'utf-8)
+
 (global-unset-key (kbd "C-r"))
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
