@@ -2,14 +2,32 @@
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
+;;(load-theme 'catppuccin t)
+;; Load the theme early. I'm not sure this works correctly.
+(when (member 'catpuccin (custom-available-themes))
+  (load-theme 'catpuccin t))
+
+;; Set font
+(set-frame-font "Inconsolata Nerd Font 16" nil t)
+
+;; Disable UI elements
+(menu-bar-mode -1)
 (scroll-bar-mode -1)
+(tool-bar-mode -1)
+(setq frame-title-format nil)
 
-(load-theme 'catppuccin t)
-
+;; Set encoding (Possibly windows required only)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-language-environment 'utf-8)
 
+;; Auto save
+(defun my/save-buffer-if-needed ()
+  (when (and buffer-file-name (buffer-modified-p))
+    (save-buffer)))
+(run-with-idle-timer 5 t #'my/save-buffer-if-needed)
+
+;; Bind C-r to redo
 (global-unset-key (kbd "C-r"))
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
@@ -20,14 +38,15 @@
 ;; Bind Command + [ to centaur-tabs-backward (instead of C-<prior>)
 (global-set-key (kbd "s-[") 'centaur-tabs-backward)
 
+;; Tabs are four spaces
 (setq-default indent-tabs-mode nil
               tab-width 4)
 
+;; Relative line numbers
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode)
 
-(setq frame-title-format nil)
-
+;; Scroll properties
 (setq scroll-margin 3                ;; start scrolling before reaching the edge
       scroll-conservatively 101     ;; never recenter unless necessary
       scroll-step 1                 ;; scroll line-by-line
@@ -44,24 +63,26 @@
 (setq whitespace-style '(face trailing tabs newline empty))
 (global-whitespace-mode 1)
 
+;; Save sessions
 (desktop-save-mode 1)
 
 ;; No sound
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
 
-(tool-bar-mode -1)
-
-(set-frame-font "Inconsolata Nerd Font 18" nil t)
-
+;; C/C++ indentation
 (defun my-c++-mode-hook ()
   (setq c-basic-offset 4)  ;; indentation width
   (setq tab-width 4)       ;; visual tab width
   (setq indent-tabs-mode nil)) ;; use spaces instead of tabs
-
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 (add-hook 'c-mode-hook 'my-c++-mode-hook)
 
+;; Rust flycheck
+(with-eval-after-load 'flycheck
+  (setq-default flycheck-disabled-checkers '(rust-cargo rust)))
+
+;; Set up required packages
 (require 'package)
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("gnu" . "https://elpa.gnu.org/packages/")))
@@ -84,6 +105,7 @@
   (setq undo-tree-auto-save-history nil))  ;; Optional: avoid clutter
 (setq evil-undo-system 'undo-tree)
 
+;; Reduce modeline information overload
 (use-package doom-modeline
   :ensure t
   :init
@@ -113,27 +135,40 @@
 
 ;; Project management
 (use-package projectile
+  :ensure t
   :config (projectile-mode 1))
+(projectile-register-project-type 'cargo '("Cargo.toml")
+  :run "cargo run")
+(with-eval-after-load 'evil
+ (define-key evil-normal-state-map (kbd "<f5>") #'projectile-run-project))
 
 ;; Auto-completion
 (use-package company
   :config (global-company-mode))
-  
-;; Snippets
+
+;; Snippets (this is when you autocomplete a function, it fills out default arguments and closing parentheses for you)
 (use-package yasnippet
   :config (yas-global-mode 1))
-  
+
+;; Rust major mode
+(use-package rust-mode
+  :ensure t
+  :hook (rust-mode . lsp))
+(setq rust-format-on-save t)
+
 ;; LSP support
 (use-package lsp-mode
   :hook ((c++-mode . lsp)
-         (c-mode . lsp))
+         (c-mode . lsp)
+         (js-mode . lsp)
+         (typescript-mode . lsp)
+         (python-mode . lsp))
   :commands lsp
   :config
-  (setq lsp-prefer-capf t)
+  (setq lsp-prefer-capf t) ;; TODO fix
   (setq lsp-enable-snippet t)
-  (setq lsp-enable-semantic-highlighting t)
   (setq lsp-semantic-tokens-enable t))
-  
+
 ;; LSP UI
 (use-package lsp-ui
   :commands lsp-ui-mode
@@ -141,27 +176,38 @@
   (setq lsp-ui-sideline-show-code-actions t
         lsp-ui-doc-enable t))
 
+;; Cargo (rust) integration
+(use-package cargo
+  :ensure t
+  :hook (rust-mode . cargo-minor-mode))
+
+;; Obtain environment from shell
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-copy-envs '("PATH" "PYTHONPATH")))
+
 ;; Catpuccin theme
 (use-package catppuccin-theme
   :init (setq catppuccin-flavor 'mocha)
   :config
   (load-theme 'catppuccin :no-confirm)
   (catppuccin-reload))
-  
+
 ;; Treemacs integration with LSP
 (use-package lsp-treemacs
   :after lsp)
-  
+
 ;; DAP mode (Debugging)
 ;; TODO fix it (might just not work outside of Linux)
 
-;; imenu
+;; imenu (this is "Structure" in IDEs). I don't really use it that much.
 (use-package imenu-list
   :ensure t
   :bind ("<f7>" . imenu-list-smart-toggle)
   :config
   (setq imenu-list-focus-after-activation t))
-  
+
 ;; File explorer
 (use-package treemacs)
 (global-set-key [f8] 'treemacs)
@@ -178,19 +224,19 @@
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
 
-;; Minimap mode
+;; Minimap mode (TODO integrate with errors)
 (use-package minimap
   :config
   (setq minimap-window-location 'right
         minimap-width-fraction 0.1))
-  
-;; Git integration
+
+;; Git integration (TODO: do we need?)
 (use-package magit)
-  
+
 ;; CMake mode
 (use-package cmake-mode)
-  
-;; Clang-format integration
+
+;; Clang-format integration (TODO: is this working properly?)
 (use-package clang-format
   :hook ((c-mode . (lambda () (add-hook 'before-save-hook #'clang-format-buffer nil t)))
          (c++-mode . (lambda () (add-hook 'before-save-hook #'clang-format-buffer nil t))))
@@ -201,16 +247,16 @@
   :ensure t
   :bind
   ("<f9>" . vterm))
-  
+
 ;; Keybinding help
 (use-package which-key
   :config (which-key-mode))
-  
+
 ;; Linting
 (use-package flycheck
  :init (global-flycheck-mode))
- 
-;; Evil mode 
+
+;; Evil mode
 (use-package evil
   :config
   (evil-mode 1)
