@@ -28,7 +28,7 @@ PROMPT='%{$fg[yellow]%}%~ %{$fg[cyan]%}$(git_branch)
 alias ls='ls --color=auto'
 alias vim='nvim'
 
-# Vi mode
+# VI mode
 bindkey -v
 
 # Autosuggestions

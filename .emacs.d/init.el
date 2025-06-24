@@ -2,19 +2,29 @@
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
-;;(load-theme 'catppuccin t)
-;; Load the theme early. I'm not sure this works correctly.
-(when (member 'catpuccin (custom-available-themes))
-  (load-theme 'catpuccin t))
-
-;; Set font
-(set-frame-font "Inconsolata Nerd Font 16" nil t)
-
 ;; Disable UI elements
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (setq frame-title-format nil)
+
+;; Hide mouse
+(setq make-pointer-invisible t)
+(mouse-avoidance-mode 'banish)
+
+;; Load theme early
+(load-theme 'catppuccin t)
+[
+(when (member 'catpuccin (custom-available-themes))
+  (load-theme 'catpuccin t))
+]
+
+;; Set font
+(set-frame-font "Inconsolata Nerd Font 12" nil t)
+
+;; Relative line numbers
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode)
 
 ;; Set encoding (Possibly windows required only)
 (prefer-coding-system 'utf-8)
@@ -42,10 +52,6 @@
 (setq-default indent-tabs-mode nil
               tab-width 4)
 
-;; Relative line numbers
-(setq display-line-numbers-type 'relative)
-(global-display-line-numbers-mode)
-
 ;; Scroll properties
 (setq scroll-margin 3                ;; start scrolling before reaching the edge
       scroll-conservatively 101     ;; never recenter unless necessary
@@ -69,6 +75,14 @@
 ;; No sound
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
+
+;; Toggle treemacs
+(defun my/toggle-treemacs-focus ()
+  "Toggle focus between Treemacs and the last window."
+  (interactive)
+  (if (string= (buffer-name) "*Treemacs-Framebuffer*")
+      (other-window 1)
+    (treemacs-select-window)))
 
 ;; C/C++ indentation
 (defun my-c++-mode-hook ()
@@ -143,12 +157,19 @@
  (define-key evil-normal-state-map (kbd "<f5>") #'projectile-run-project))
 
 ;; Auto-completion
+;; Disable for same reason as snippets.
+[
 (use-package company
   :config (global-company-mode))
+]
 
 ;; Snippets (this is when you autocomplete a function, it fills out default arguments and closing parentheses for you)
+;; We are disabling this for now, because I believe it crashes our LSP.
+;; Is this true? I'm only about 70% sure.
+[
 (use-package yasnippet
   :config (yas-global-mode 1))
+]
 
 ;; Rust major mode
 (use-package rust-mode
@@ -255,6 +276,18 @@
 ;; Linting
 (use-package flycheck
  :init (global-flycheck-mode))
+
+;; Leader for evil
+(use-package evil-leader
+  :init
+  (global-evil-leader-mode)
+  (evil-leader/set-leader "<SPC>")
+  (add-hook 'treemacs-mode-hook
+          (lambda ()
+            (evil-leader-mode 1)
+            (evil-normalize-keymaps)))  ;; refresh evil maps
+  (evil-leader/set-key "x" 'kill-buffer)
+  (evil-leader/set-key "o" 'my/toggle-treemacs-focus))
 
 ;; Evil mode
 (use-package evil
