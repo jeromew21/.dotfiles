@@ -287,6 +287,8 @@
             (evil-leader-mode 1)
             (evil-normalize-keymaps)))  ;; refresh evil maps
   (evil-leader/set-key "x" 'kill-buffer)
+  (evil-leader/set-key "]" 'centaur-tabs-forward)
+  (evil-leader/set-key "[" 'centaur-tabs-backward)
   (evil-leader/set-key "o" 'my/toggle-treemacs-focus))
 
 ;; Evil mode
