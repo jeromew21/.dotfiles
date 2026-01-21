@@ -1,3 +1,9 @@
+;;; This is my emacs init file.
+
+;;;
+;;; WINDOW SETUP
+;;;
+
 ;; Speed up startup
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
@@ -12,15 +18,11 @@
 (setq make-pointer-invisible t)
 (mouse-avoidance-mode 'banish)
 
-;; Load theme early
-(load-theme 'catppuccin t)
-[
-(when (member 'catpuccin (custom-available-themes))
-  (load-theme 'catpuccin t))
-]
-
 ;; Set font
-(set-frame-font "Inconsolata Nerd Font 12" nil t)
+;; (set-frame-font "Inconsolata Nerd Font 12" nil t)
+;; (setq my-default-font "Iosevka Nerd Font")
+(setq my-default-font "Comic Code")
+(set-frame-font my-default-font nil t)
 
 ;; Relative line numbers
 (setq display-line-numbers-type 'relative)
@@ -42,12 +44,6 @@
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
 
-;; Bind Command + ] to centaur-tabs-forward (instead of C-<next>)
-(global-set-key (kbd "s-]") 'centaur-tabs-forward)
-
-;; Bind Command + [ to centaur-tabs-backward (instead of C-<prior>)
-(global-set-key (kbd "s-[") 'centaur-tabs-backward)
-
 ;; Tabs are four spaces
 (setq-default indent-tabs-mode nil
               tab-width 4)
@@ -63,7 +59,6 @@
 (setq require-final-newline t)
 (setq-default indicate-empty-lines t)
 (setq-default mode-require-final-newline t)
-;; optional
 (when (fboundp 'toggle-indicate-empty-lines)
   (toggle-indicate-empty-lines 1))
 (setq whitespace-style '(face trailing tabs newline empty))
@@ -76,25 +71,11 @@
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
 
-;; Toggle treemacs
-(defun my/toggle-treemacs-focus ()
-  "Toggle focus between Treemacs and the last window."
-  (interactive)
-  (if (string= (buffer-name) "*Treemacs-Framebuffer*")
-      (other-window 1)
-    (treemacs-select-window)))
 
-;; C/C++ indentation
-(defun my-c++-mode-hook ()
-  (setq c-basic-offset 4)  ;; indentation width
-  (setq tab-width 4)       ;; visual tab width
-  (setq indent-tabs-mode nil)) ;; use spaces instead of tabs
-(add-hook 'c++-mode-hook 'my-c++-mode-hook)
-(add-hook 'c-mode-hook 'my-c++-mode-hook)
+;;;
+;;; END WINDOW SETUP
+;;;
 
-;; Rust flycheck
-(with-eval-after-load 'flycheck
-  (setq-default flycheck-disabled-checkers '(rust-cargo rust)))
 
 ;; Set up required packages
 (require 'package)
@@ -118,6 +99,14 @@
   :config
   (setq undo-tree-auto-save-history nil))  ;; Optional: avoid clutter
 (setq evil-undo-system 'undo-tree)
+
+;; Setup theme
+(use-package almost-mono-themes
+  :config
+  ;; (load-theme 'almost-mono-gray t)
+  ;; (load-theme 'almost-mono-cream t)
+  ;; (load-theme 'almost-mono-white t)
+  (load-theme 'almost-mono-black t))
 
 ;; Reduce modeline information overload
 (use-package doom-modeline
@@ -151,90 +140,22 @@
 (use-package projectile
   :ensure t
   :config (projectile-mode 1))
-(projectile-register-project-type 'cargo '("Cargo.toml")
-  :run "cargo run")
+
 (with-eval-after-load 'evil
  (define-key evil-normal-state-map (kbd "<f5>") #'projectile-run-project))
 
-;; Auto-completion
-;; Disable for same reason as snippets.
-[
-(use-package company
-  :config (global-company-mode))
-]
-
-;; Snippets (this is when you autocomplete a function, it fills out default arguments and closing parentheses for you)
-;; We are disabling this for now, because I believe it crashes our LSP.
-;; Is this true? I'm only about 70% sure.
-[
-(use-package yasnippet
-  :config (yas-global-mode 1))
-]
-
-;; Rust major mode
-(use-package rust-mode
-  :ensure t
-  :hook (rust-mode . lsp))
-(setq rust-format-on-save t)
-
-;; LSP support
-(use-package lsp-mode
-  :hook ((c++-mode . lsp)
-         (c-mode . lsp)
-         (js-mode . lsp)
-         (typescript-mode . lsp)
-         (python-mode . lsp))
-  :commands lsp
-  :config
-  (setq lsp-prefer-capf t) ;; TODO fix
-  (setq lsp-enable-snippet t)
-  (setq lsp-semantic-tokens-enable t))
-
-;; LSP UI
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-sideline-show-code-actions t
-        lsp-ui-doc-enable t))
-
-;; Cargo (rust) integration
-(use-package cargo
-  :ensure t
-  :hook (rust-mode . cargo-minor-mode))
-
-;; Obtain environment from shell
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (exec-path-from-shell-copy-envs '("PATH" "PYTHONPATH")))
-
-;; Catpuccin theme
-(use-package catppuccin-theme
-  :init (setq catppuccin-flavor 'mocha)
-  :config
-  (load-theme 'catppuccin :no-confirm)
-  (catppuccin-reload))
-
-;; Treemacs integration with LSP
-(use-package lsp-treemacs
-  :after lsp)
-
-;; DAP mode (Debugging)
-;; TODO fix it (might just not work outside of Linux)
-
-;; imenu (this is "Structure" in IDEs). I don't really use it that much.
-(use-package imenu-list
-  :ensure t
-  :bind ("<f7>" . imenu-list-smart-toggle)
-  :config
-  (setq imenu-list-focus-after-activation t))
-
 ;; File explorer
 (use-package treemacs)
-(global-set-key [f8] 'treemacs)
 (setq treemacs-no-png-images t)  ;; If icons aren't showing properly
 (use-package treemacs-evil)
 (treemacs-project-follow-mode t)
+
+(defun my/toggle-treemacs-focus ()
+  "Toggle focus between Treemacs and the last window."
+  (interactive)
+  (if (string= (buffer-name) "*Treemacs-Framebuffer*")
+      (other-window 1)
+    (treemacs-select-window)))
 
 ;; Tabbed layout
 (use-package centaur-tabs
@@ -244,25 +165,16 @@
   :bind
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
+(global-set-key (kbd "s-]") 'centaur-tabs-forward)
+(global-set-key (kbd "s-[") 'centaur-tabs-backward)
+(centaur-tabs-change-fonts my-default-font 120)
+(setq centaur-tabs-set-bar 'under)
+(setq x-underline-at-descent-line t)
+(setq centaur-tabs-set-modified-marker t)
+(setq centaur-tabs-modified-marker "●")
 
-;; Minimap mode (TODO integrate with errors)
-(use-package minimap
-  :config
-  (setq minimap-window-location 'right
-        minimap-width-fraction 0.1))
-
-;; Git integration (TODO: do we need?)
-(use-package magit)
-
-;; CMake mode
-(use-package cmake-mode)
-
-;; Clang-format integration (TODO: is this working properly?)
-(use-package clang-format
-  :hook ((c-mode . (lambda () (add-hook 'before-save-hook #'clang-format-buffer nil t)))
-         (c++-mode . (lambda () (add-hook 'before-save-hook #'clang-format-buffer nil t))))
-  :config (setq clang-format-style-option "llvm"))
-
+;; Customize the tab faces
+(centaur-tabs-headline-match)
 ;; vterm integrated terminal
 (use-package vterm
   :ensure t
@@ -273,9 +185,20 @@
 (use-package which-key
   :config (which-key-mode))
 
-;; Linting
-(use-package flycheck
- :init (global-flycheck-mode))
+;; LSP
+(use-package lsp-mode
+  :ensure t
+  :hook (c++-mode . lsp)
+  :config
+  (setq lsp-keymap-prefix "C-c l"
+        lsp-headerline-breadcrumb-enable nil  ; Disable breadcrumb
+        lsp-ui-sideline-enable nil            ; Disable sideline
+        lsp-ui-doc-enable nil                 ; Disable hover doc popup
+        lsp-lens-enable nil))                 ; Disable code lens
+
+(use-package company
+  :ensure t
+  :hook (prog-mode . company-mode))
 
 ;; Leader for evil
 (use-package evil-leader
