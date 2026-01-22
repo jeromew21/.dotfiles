@@ -1,12 +1,21 @@
 ;;; This is my emacs init file.
 
-;;;
+
 ;;; WINDOW SETUP
-;;;
+
 
 ;; Speed up startup
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
+
+;; Set font
+;; (setq my-default-font "Inconsolata Nerd Font")
+(setq my-default-font "Iosevka Nerd Font")
+;; (setq my-default-font "Comic Code")
+(setq my-default-font-size 12)
+(set-face-attribute 'default nil
+                    :family my-default-font
+                    :height (* my-default-font-size 10))  ; Height is in 1/10pt
 
 ;; Disable UI elements
 (menu-bar-mode -1)
@@ -14,42 +23,34 @@
 (tool-bar-mode -1)
 (setq frame-title-format nil)
 
+;; No sound
+(setq visible-bell t)
+(setq ring-bell-function 'ignore)
+
+;; Disable tilde files
+(setq make-backup-files nil)
+
 ;; Hide mouse
 (setq make-pointer-invisible t)
 (mouse-avoidance-mode 'banish)
 
-;; Set font
-;; (set-frame-font "Inconsolata Nerd Font 12" nil t)
-;; (setq my-default-font "Iosevka Nerd Font")
-(setq my-default-font "Comic Code")
-(set-frame-font my-default-font nil t)
-
 ;; Relative line numbers
 (setq display-line-numbers-type 'relative)
+(setq display-line-numbers-width-start t)
 (global-display-line-numbers-mode)
 
-;; Set encoding (Possibly windows required only)
+;; Set encoding (Possibly required on windows only)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-language-environment 'utf-8)
 
-;; Auto save
-(defun my/save-buffer-if-needed ()
-  (when (and buffer-file-name (buffer-modified-p))
-    (save-buffer)))
-(run-with-idle-timer 5 t #'my/save-buffer-if-needed)
-
-;; Bind C-r to redo
-(global-unset-key (kbd "C-r"))
-(with-eval-after-load 'evil
-  (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
-
 ;; Tabs are four spaces
-(setq-default indent-tabs-mode nil
-              tab-width 4)
+(setq-default c-basic-offset 4
+              tab-width 4
+              indent-tabs-mode nil)
 
 ;; Scroll properties
-(setq scroll-margin 3                ;; start scrolling before reaching the edge
+(setq scroll-margin 3               ;; start scrolling before reaching the edge
       scroll-conservatively 101     ;; never recenter unless necessary
       scroll-step 1                 ;; scroll line-by-line
       scroll-preserve-screen-position t
@@ -57,24 +58,13 @@
 
 ;; Require ending newlines
 (setq require-final-newline t)
-(setq-default indicate-empty-lines t)
-(setq-default mode-require-final-newline t)
-(when (fboundp 'toggle-indicate-empty-lines)
-  (toggle-indicate-empty-lines 1))
-(setq whitespace-style '(face trailing tabs newline empty))
-(global-whitespace-mode 1)
+(setq-default show-trailing-whitespace t)
 
 ;; Save sessions
-(desktop-save-mode 1)
-
-;; No sound
-(setq visible-bell t)
-(setq ring-bell-function 'ignore)
+;; (desktop-save-mode 1)
 
 
-;;;
 ;;; END WINDOW SETUP
-;;;
 
 
 ;; Set up required packages
@@ -107,6 +97,16 @@
   ;; (load-theme 'almost-mono-cream t)
   ;; (load-theme 'almost-mono-white t)
   (load-theme 'almost-mono-black t))
+
+;; Autosaving
+(use-package super-save
+  :ensure t
+  :config
+  (super-save-mode +1)
+  (setq super-save-auto-save-when-idle t
+        super-save-idle-duration 5)
+  ;; Save all buffers, not just current
+  (setq super-save-all-buffers t))
 
 ;; Reduce modeline information overload
 (use-package doom-modeline
@@ -146,9 +146,21 @@
 
 ;; File explorer
 (use-package treemacs)
-(setq treemacs-no-png-images t)  ;; If icons aren't showing properly
+(use-package treemacs
+  :ensure t
+  :config
+  ;; Disable line numbers
+  (add-hook 'treemacs-mode-hook
+            (lambda () (display-line-numbers-mode -1)))
+  ;; Visual improvements
+  (setq treemacs-width 30
+        treemacs-indentation 2
+        treemacs-show-cursor nil
+        treemacs-is-never-other-window t))
+(setq treemacs-no-png-images t)
+
 (use-package treemacs-evil)
-(treemacs-project-follow-mode t)
+(treemacs-project-follow-mode t) ;; if we do remove Projectile, this maybe should be remove too
 
 (defun my/toggle-treemacs-focus ()
   "Toggle focus between Treemacs and the last window."
@@ -167,19 +179,12 @@
   ("C-<next>" . centaur-tabs-forward))
 (global-set-key (kbd "s-]") 'centaur-tabs-forward)
 (global-set-key (kbd "s-[") 'centaur-tabs-backward)
-(centaur-tabs-change-fonts my-default-font 120)
+(centaur-tabs-change-fonts my-default-font (* my-default-font-size 10))
 (setq centaur-tabs-set-bar 'under)
 (setq x-underline-at-descent-line t)
 (setq centaur-tabs-set-modified-marker t)
 (setq centaur-tabs-modified-marker "●")
-
-;; Customize the tab faces
 (centaur-tabs-headline-match)
-;; vterm integrated terminal
-(use-package vterm
-  :ensure t
-  :bind
-  ("<f9>" . vterm))
 
 ;; Keybinding help
 (use-package which-key
@@ -196,6 +201,7 @@
         lsp-ui-doc-enable nil                 ; Disable hover doc popup
         lsp-lens-enable nil))                 ; Disable code lens
 
+;; Auto completion
 (use-package company
   :ensure t
   :hook (prog-mode . company-mode))
@@ -218,6 +224,10 @@
 (use-package evil
   :config
   (evil-mode 1)
+  (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
+
+(global-unset-key (kbd "C-r"))
+(with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
 
 (custom-set-variables
