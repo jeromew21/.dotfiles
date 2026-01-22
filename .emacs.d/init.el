@@ -15,8 +15,11 @@
 
 ;; Set font
 ;; (setq my-default-font "Inconsolata Nerd Font")
+(setq my-default-font "JetBrainsMono Nerd Font")
+;; (setq my-default-font "MesloLGS Nerd Font")
+;; (setq my-default-font "FiraMono Nerd Font")
 ;; (setq my-default-font "Iosevka Nerd Font")
-(setq my-default-font "Comic Code")
+;; (setq my-default-font "Comic Code")
 (setq my-default-font-size 12)
 (set-face-attribute 'default nil
                     :family my-default-font
@@ -44,6 +47,10 @@
 (setq display-line-numbers-width-start t)
 (global-display-line-numbers-mode)
 
+;; Column limit
+(setq-default fill-column 100)
+(global-display-fill-column-indicator-mode 1)
+
 ;; Set encoding (Possibly required on windows only)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -64,9 +71,10 @@
 ;; Require ending newlines
 (setq require-final-newline t)
 (setq-default show-trailing-whitespace t)
+(global-whitespace-mode -1)  ; Disable it
 
 ;; Save sessions
-;; (desktop-save-mode 1)
+(desktop-save-mode 1)
 
 
 ;;; END WINDOW SETUP
@@ -232,8 +240,8 @@
   (add-hook 'treemacs-mode-hook
           (lambda ()
             (evil-leader-mode 1)
-            (evil-normalize-keymaps)))  ;; refresh evil maps
-  (evil-leader/set-key "x" 'kill-buffer)
+            (evil-normalize-keymaps))) ;; refresh evil maps
+  (evil-leader/set-key "x" 'kill-current-buffer)
   (evil-leader/set-key "]" 'centaur-tabs-forward)
   (evil-leader/set-key "[" 'centaur-tabs-backward)
   (evil-leader/set-key "o" 'my/toggle-treemacs-focus))
