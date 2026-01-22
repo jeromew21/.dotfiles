@@ -8,10 +8,15 @@
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
+;; Write to custom file
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 ;; Set font
 ;; (setq my-default-font "Inconsolata Nerd Font")
-(setq my-default-font "Iosevka Nerd Font")
-;; (setq my-default-font "Comic Code")
+;; (setq my-default-font "Iosevka Nerd Font")
+(setq my-default-font "Comic Code")
 (setq my-default-font-size 12)
 (set-face-attribute 'default nil
                     :family my-default-font
@@ -91,12 +96,20 @@
 (setq evil-undo-system 'undo-tree)
 
 ;; Setup theme
+[
 (use-package almost-mono-themes
   :config
   ;; (load-theme 'almost-mono-gray t)
   ;; (load-theme 'almost-mono-cream t)
   ;; (load-theme 'almost-mono-white t)
   (load-theme 'almost-mono-black t))
+]
+
+;; (load-theme 'modus-vivendi-tinted t)
+
+(use-package ef-themes
+  :config
+  (load-theme 'ef-dark t))
 
 ;; Autosaving
 (use-package super-save
@@ -145,22 +158,27 @@
  (define-key evil-normal-state-map (kbd "<f5>") #'projectile-run-project))
 
 ;; File explorer
-(use-package treemacs)
 (use-package treemacs
   :ensure t
   :config
-  ;; Disable line numbers
+  (treemacs-follow-mode -1)
+  (treemacs-filewatch-mode -1)
   (add-hook 'treemacs-mode-hook
             (lambda () (display-line-numbers-mode -1)))
   ;; Visual improvements
   (setq treemacs-width 30
         treemacs-indentation 2
-        treemacs-show-cursor nil
         treemacs-is-never-other-window t))
 (setq treemacs-no-png-images t)
+(with-eval-after-load 'treemacs
+  (set-face-attribute 'treemacs-root-face nil
+                      :height 1.0
+                      :weight 'normal
+                      :foreground nil  ; Use default foreground
+                      :inherit 'default))
 
 (use-package treemacs-evil)
-(treemacs-project-follow-mode t) ;; if we do remove Projectile, this maybe should be remove too
+(treemacs-project-follow-mode t) ;; if we do remove Projectile, what do we do with this?
 
 (defun my/toggle-treemacs-focus ()
   "Toggle focus between Treemacs and the last window."
@@ -229,16 +247,3 @@
 (global-unset-key (kbd "C-r"))
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
