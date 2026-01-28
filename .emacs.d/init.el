@@ -3,27 +3,102 @@
 ;; - Font family cycling
 ;; - Make this thing idempotent so I don't have to keep restarting
 
+;; (setq debug-on-error t)  ;; Uncomment this out to show backtrace on errors
 
 ;; Speed up startup
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
+
+;; Try speed up editor
+(setq redisplay-skip-fontification-on-input t)  ;; Skip font-lock during fast typing
+(setq bidi-inhibit-bpa t)  ;; Disable bidirectional text (if you don't need Arabic/Hebrew)
+(setq-default bidi-display-reordering nil)
+(setq jit-lock-defer-time 0.05)  ;; Defer syntax highlighting slightly
 
 ;; Write to custom file
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
-;; Set font
-(setq my-default-font "JetBrainsMono Nerd Font")
-;; (setq my-default-font "Inconsolata Nerd Font")
-;; (setq my-default-font "Iosevka Nerd Font")
-;; (setq my-default-font "Comic Code")
-;; (setq my-default-font "MesloLGS Nerd Font")
-;; (setq my-default-font "FiraMono Nerd Font")
+;; Font setup
+(defun my/font-installed-p (font-name)
+  "Check if FONT-NAME is installed on the system."
+  (member font-name (font-family-list)))
+
+(defun my/get-first-available-font (font-list)
+  "Return the first available font from FONT-LIST, or nil if none found."
+  (seq-find #'my/font-installed-p font-list))
+
+(defun my/set-font (font-name)
+  "Set the font to FONT-NAME if available."
+  (when (my/font-installed-p font-name)
+    (set-face-attribute 'default nil
+                        :family font-name
+                        :height (* my-default-font-size 10))
+    (message "Font set to: %s" font-name)
+    t))
+
+(defun my/cycle-font ()
+  "Cycle through available fonts in my-font-list."
+  (interactive)
+  (let ((available-fonts (seq-filter #'my/font-installed-p my-font-list)))
+    (if (null available-fonts)
+        (message "No fonts from the list are installed!")
+      (setq my-current-font-index
+            (mod (1+ my-current-font-index) (length available-fonts)))
+      (let ((next-font (nth my-current-font-index available-fonts)))
+        (when (my/set-font next-font)
+          ;; Update centaur-tabs font too
+          (when (featurep 'centaur-tabs)
+            (centaur-tabs-change-fonts next-font (* my-default-font-size 10))))))))
+
+(defun my/increase-font-size ()
+  "Increase font size by 1."
+  (interactive)
+  (setq my-default-font-size (+ my-default-font-size 1))
+  (set-face-attribute 'default nil :height (* my-default-font-size 10))
+  ;; Update centaur-tabs if loaded
+  (when (featurep 'centaur-tabs)
+    (centaur-tabs-change-fonts (face-attribute 'default :family)
+                                (face-attribute 'default :height)))
+  (message "Font size: %d" my-default-font-size))
+
+(defun my/decrease-font-size ()
+  "Decrease font size by 1."
+  (interactive)
+  (setq my-default-font-size (- my-default-font-size 1))
+  (set-face-attribute 'default nil :height (* my-default-font-size 10))
+  ;; Update centaur-tabs if loaded
+  (when (featurep 'centaur-tabs)
+    (centaur-tabs-change-fonts (face-attribute 'default :family)
+                                (face-attribute 'default :height)))
+  (message "Font size: %d" my-default-font-size))
+
+(defun my/reset-font-size ()
+  "Reset font size to default (12)."
+  (interactive)
+  (setq my-default-font-size 12)
+  (set-face-attribute 'default nil :height (* my-default-font-size 10))
+  (when (featurep 'centaur-tabs)
+    (centaur-tabs-change-fonts (face-attribute 'default :family)
+                                (face-attribute 'default :height)))
+  (message "Font size reset to: %d" my-default-font-size))
+
+(setq my-font-list
+      '("JetBrainsMono Nerd Font"
+        "Inconsolata Nerd Font"
+        "Iosevka Nerd Font"
+        "Comic Code"
+        "ComicShannsMono Nerd Font"
+        "FiraMono Nerd Font"
+        "MesloLGS Nerd Font"))
 (setq my-default-font-size 12)
-(set-face-attribute 'default nil
-                    :family my-default-font
-                    :height (* my-default-font-size 10))  ; Height is in 1/10pt
+(setq my-current-font-index 0)
+
+(let ((initial-font (my/get-first-available-font my-font-list)))
+  (if initial-font
+      (my/set-font initial-font)
+    (message "Warning: No fonts from my-font-list are installed!")))
 
 ;; Disable UI elements
 (menu-bar-mode -1)
@@ -65,6 +140,7 @@
   (when (and buffer-file-name
              (not (file-exists-p buffer-file-name)))
     (kill-buffer (current-buffer))))
+(add-hook 'buffer-list-update-hook #'my/kill-buffer-if-file-deleted)
 
 ;; Set encoding (May be requirement on Windows only)
 (prefer-coding-system 'utf-8)
@@ -114,18 +190,15 @@
 (setq evil-undo-system 'undo-tree)
 
 ;; Setup theme
-[
-(use-package almost-mono-themes
-  :config
-  ;; (load-theme 'almost-mono-gray t)
-  ;; (load-theme 'almost-mono-cream t)
-  ;; (load-theme 'almost-mono-white t)
-  (load-theme 'almost-mono-black t)) ;; Less syntax highlighting, but easy on the eyes
-]
-
+;; (use-package almost-mono-themes
+;;   :config
+;;     (load-theme 'almost-mono-gray t)
+;;     (load-theme 'almost-mono-cream t)
+;;     (load-theme 'almost-mono-white t)
+;;     (load-theme 'almost-mono-black t)) ;; Less syntax highlighting, but easy on the eyes
 ;; (load-theme 'modus-vivendi-tinted t)
 
-(use-package ef-themes
+(use-package ef-themes ;; My endgame theme
   :config
   (load-theme 'ef-dark t))
 
@@ -138,33 +211,42 @@
         super-save-idle-duration 5)
   (setq super-save-all-buffers t))
 
-;; Reduce modeline information overload
-(use-package doom-modeline
+;; Mode line
+;; Try replacing doom-modeline with a simpler one:
+(use-package mood-line
   :ensure t
-  :init
-  (setq doom-modeline-height 1
-        doom-modeline-bar-width 0
-        doom-modeline-hud nil
-        doom-modeline-icon nil
-        doom-modeline-major-mode-icon nil
-        doom-modeline-major-mode-color-icon nil
-        doom-modeline-buffer-state-icon nil
-        doom-modeline-buffer-modification-icon nil
-        doom-modeline-enable-word-count nil
-        doom-modeline-buffer-encoding nil
-        doom-modeline-env-version nil
-        doom-modeline-time nil
-        doom-modeline-indent-info nil
-        doom-modeline-lsp nil
-        doom-modeline-github nil
-        doom-modeline-github-interval 0
-        doom-modeline-minor-modes nil
-        doom-modeline-persp-name nil
-        doom-modeline-workspace-name nil
-        doom-modeline-checker-simple-format t
-        doom-modeline-vcs-max-length 12)
   :config
-  (doom-modeline-mode 1))
+  (mood-line-mode))
+
+;; Or just use the default modeline:
+;; (doom-modeline-mode -1)
+
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :init
+;;   (setq doom-modeline-height 1
+;;         doom-modeline-bar-width 0
+;;         doom-modeline-hud nil
+;;         doom-modeline-icon nil
+;;         doom-modeline-major-mode-icon nil
+;;         doom-modeline-major-mode-color-icon nil
+;;         doom-modeline-buffer-state-icon nil
+;;         doom-modeline-buffer-modification-icon nil
+;;         doom-modeline-enable-word-count nil
+;;         doom-modeline-buffer-encoding nil
+;;         doom-modeline-env-version nil
+;;         doom-modeline-time nil
+;;         doom-modeline-indent-info nil
+;;         doom-modeline-lsp nil
+;;         doom-modeline-github nil
+;;         doom-modeline-github-interval 0
+;;         doom-modeline-minor-modes nil
+;;         doom-modeline-persp-name nil
+;;         doom-modeline-workspace-name nil
+;;         doom-modeline-checker-simple-format t
+;;         doom-modeline-vcs-max-length 12)
+;;   :config
+;;   (doom-modeline-mode 1))
 
 ;; File explorer
 (use-package treemacs
@@ -174,19 +256,20 @@
   :init
   (setq treemacs-width 30
         treemacs-indentation 2
+        treemacs-no-png-images t
         treemacs-is-never-other-window t)
   :config
   (treemacs-follow-mode -1)
   (treemacs-filewatch-mode -1)
   (add-hook 'treemacs-mode-hook
             (lambda () (display-line-numbers-mode -1))))
-(setq treemacs-no-png-images t)
-(with-eval-after-load 'treemacs
-  (set-face-attribute 'treemacs-root-face nil
-                      :height 1.0
-                      :weight 'normal
-                      :foreground nil  ; Use default foreground
-                      :inherit 'default))
+
+(set-face-attribute 'treemacs-root-face nil
+                    :height 1.0
+                    :weight 'normal
+                    :foreground nil
+                    :inherit 'default)
+
 (use-package treemacs-evil)
 (defun my/toggle-treemacs-focus ()
   "Toggle focus between Treemacs and the last window."
@@ -196,31 +279,29 @@
     (treemacs-select-window)))
 
 ;; [DISABLED] Project management
-[
-(use-package projectile
-  :ensure t
-  :config (projectile-mode 1))
- (with-eval-after-load 'evil
- (define-key evil-normal-state-map (kbd "<f5>") #'projectile-run-project))
-(treemacs-project-follow-mode t)
-]
+;; (use-package projectile
+;;   :ensure t
+;;   :config (projectile-mode 1))
+;;  (with-eval-after-load 'evil
+;;  (define-key evil-normal-state-map (kbd "<f5>") #'projectile-run-project))
+;; (treemacs-project-follow-mode t)
 
 ;; Tabbed layout
 (use-package centaur-tabs
   :demand
+  :bind
+  (("C-<prior>" . centaur-tabs-backward)
+  ("C-<next>" . centaur-tabs-forward)
+  ("s-]" . 'centaur-tabs-forward)
+  ("s-[" . 'centaur-tabs-backward))
   :config
   (centaur-tabs-mode t)
-  :bind
-  ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward))
-(global-set-key (kbd "s-]") 'centaur-tabs-forward)
-(global-set-key (kbd "s-[") 'centaur-tabs-backward)
-(centaur-tabs-change-fonts my-default-font (* my-default-font-size 10))
+  (centaur-tabs-change-fonts (face-attribute 'default :family) (face-attribute 'default :height))
+  (centaur-tabs-headline-match))
 (setq centaur-tabs-set-bar 'under)
 (setq x-underline-at-descent-line t)
 (setq centaur-tabs-set-modified-marker t)
 (setq centaur-tabs-modified-marker "●")
-(centaur-tabs-headline-match)
 
 ;; Integrated terminal
 (use-package vterm
@@ -241,7 +322,10 @@
 
 ;; Keybinding help
 (use-package which-key
-  :config (which-key-mode))
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 0.4)
+  (setq which-key-idle-secondary-delay 0.05))
 
 ;; Company for autocompletion
 (use-package company
@@ -266,9 +350,12 @@
         lsp-ui-sideline-enable nil            ; Disable sideline
         lsp-ui-doc-enable nil                 ; Disable hover doc popup
         lsp-auto-install-server t
+        lsp-enable-symbol-highlighting nil
         lsp-enable-file-watchers nil
+        lsp-enable-on-type-formatting nil
+        lsp-enable-indentation nil
+        lsp-rename-use-prepare nil
         lsp-lens-enable nil))                 ; Disable code lens
-(setq lsp-rename-use-prepare nil) ;; Force minibuffer rename
 
 ;; Python support with Pyright
 (use-package lsp-pyright
@@ -277,8 +364,15 @@
                          (require 'lsp-pyright)
                          (lsp))))
 
+;; C++ mode hooks
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (electric-indent-mode 1)
+            (electric-pair-mode 1)
+            (local-set-key (kbd "RET") 'c-context-line-break)))
+
 ;; Leader for evil
-;; NOTE: Some of these commands are hallucinated.
+;; NOTE: Some of these commands may be hallucinated. I'm trying to remove them.
 (use-package evil-leader
   :ensure t
   :init
@@ -322,6 +416,11 @@
     "t e" 'eshell                   ;; Built-in Emacs shell
     "t s" 'shell)                   ;; Built-in shell
   (evil-leader/set-key "SPC" 'execute-extended-command)  ;; SPC SPC = M-x
+  (evil-leader/set-key
+    "f +" 'my/increase-font-size
+    "f -" 'my/decrease-font-size
+    "f =" 'my/reset-font-size
+    "f c" 'my/cycle-font)
   (evil-leader/set-key
     ;; Splits
     "w v" 'split-window-right       ;; Vertical split
