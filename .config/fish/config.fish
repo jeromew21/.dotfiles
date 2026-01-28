@@ -1,8 +1,22 @@
 # Fish configuration
 # (This file goes in ~/.config/fish/config.fish)
 
+set fish_greeting
+
+# Homebrew (macOS only)
+if test (uname) = Darwin
+    fish_add_path /opt/homebrew/bin
+    fish_add_path /usr/local/bin
+end
+
+# Linux user binaries
+if test (uname) = Linux
+    fish_add_path ~/.local/bin
+    # fish_add_path ~/.cargo/bin
+end
+
 # Alias
-# alias vim='nvim'
+alias vim='nvim'
 
 # VI mode with cursor shapes
 fish_vi_key_bindings
