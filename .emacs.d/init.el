@@ -85,12 +85,16 @@
 
 (setq my-font-list
       '("JetBrainsMono Nerd Font"
-        "Inconsolata Nerd Font"
-        "Iosevka Nerd Font"
+        "BlexMono Nerd Font"
         "Comic Code"
-        "ComicShannsMono Nerd Font"
+        "Inconsolata Nerd Font"
+        "SauceCodePro Nerd Font"
         "FiraMono Nerd Font"
-        "MesloLGS Nerd Font"))
+        "FiraCode Nerd Font"
+        "MesloLGS Nerd Font"
+        "Iosevka Nerd Font"
+        "ComicShannsMono Nerd Font"
+        "CaskaydiaMono Nerd Font"))
 (setq my-default-font-size 12)
 (setq my-current-font-index 0)
 
@@ -114,6 +118,7 @@
 
 ;; Disable tilde files
 (setq make-backup-files nil)
+(setq auto-save-default nil)
 
 ;; Hide mouse
 ;; This is a bit flaky on Wayland, but it's good enough.
@@ -192,6 +197,7 @@
 (setq evil-undo-system 'undo-tree)
 
 ;; Setup theme
+;; NOTE: `M-x eval-buffer` if new theme doesn't load properly.
 ;; (use-package almost-mono-themes
 ;;   :config
 ;;     (load-theme 'almost-mono-gray t)
@@ -200,9 +206,16 @@
 ;;     (load-theme 'almost-mono-black t)) ;; Less syntax highlighting, but easy on the eyes
 ;; (load-theme 'modus-vivendi-tinted t)
 
-(use-package ef-themes ;; My endgame theme
+;; As far as light themes go, solarized light is fine.
+;; Solarized dark is ass imo
+(use-package solarized-theme
   :config
-  (load-theme 'ef-dark t))
+  (load-theme 'solarized-light t))
+
+;; (use-package ef-themes ;; My endgame dark theme
+;;   :config
+;;   ;; (load-theme 'ef-dark t))
+;;   (load-theme 'ef-light t))
 
 ;; Autosaving
 (use-package super-save
@@ -256,29 +269,20 @@
   :config
   ;; Visual improvements
   :init
-  (setq treemacs-width 30
+  (setq treemacs-width 40
         treemacs-indentation 2
         treemacs-no-png-images t
         treemacs-is-never-other-window t)
   :config
+  (set-face-attribute 'treemacs-root-face nil
+        :height 1.0
+        :weight 'normal
+        :foreground 'unspecified
+        :inherit 'default)
   (treemacs-follow-mode -1)
   (treemacs-filewatch-mode -1)
   (add-hook 'treemacs-mode-hook
             (lambda () (display-line-numbers-mode -1))))
-
-(set-face-attribute 'treemacs-root-face nil
-                    :height 1.0
-                    :weight 'normal
-                    :foreground nil
-                    :inherit 'default)
-
-(use-package treemacs-evil)
-(defun my/toggle-treemacs-focus ()
-  "Toggle focus between Treemacs and the last window."
-  (interactive)
-  (if (string= (buffer-name) "*Treemacs-Framebuffer*")
-      (other-window 1)
-    (treemacs-select-window)))
 
 ;; [DISABLED] Project management
 ;; (use-package projectile
@@ -337,6 +341,22 @@
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 1))
 
+;; Yasnippets for autocompletion
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode 1))
+
+;; Trying out this package
+(use-package doxymacs
+  :ensure t
+  :hook (c++-mode . doxymacs-mode)
+  :config
+  (defun my/doxygen-comment ()
+    "Insert Doxygen comment template."
+    (interactive)
+    (doxymacs-insert-function-comment)))
+
 ;; LSP
 (use-package lsp-mode
   :ensure t
@@ -359,12 +379,21 @@
         lsp-rename-use-prepare nil
         lsp-lens-enable nil))                 ; Disable code lens
 
-;; Python support with Pyright
+;; Python support with Pyright and Black
 (use-package lsp-pyright
   :ensure t
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
-                         (lsp))))
+                         (lsp)))
+  :config
+  (setq lsp-pyright-use-library-code-for-types t)
+  ;; Use black for formatting
+  (setq lsp-pyright-python-executable-cmd "python3"))
+
+(use-package python-black
+  :ensure t
+  :after python
+  :hook (python-mode . python-black-on-save-mode))  ;; Auto-format on save
 
 ;; C++ mode hooks
 (add-hook 'c++-mode-hook
@@ -374,7 +403,7 @@
             (local-set-key (kbd "RET") 'c-context-line-break)))
 
 ;; Leader for evil
-;; NOTE: Some of these commands may be hallucinated. I'm trying to remove them.
+;; NOTE: when evaluating this buffer, afterwards, execute M-x evil-leader-mode
 (use-package evil-leader
   :ensure t
   :init
@@ -385,7 +414,8 @@
           (lambda ()
             (evil-leader-mode 1)
             (evil-normalize-keymaps))) ;; refresh evil maps
-  (evil-leader/set-key "x" 'kill-current-buffer)
+  (evil-leader/set-key
+    "x f" 'find-file)
   (evil-leader/set-key "]" 'centaur-tabs-forward)
   (evil-leader/set-key "[" 'centaur-tabs-backward)
   (evil-leader/set-key "/" 'comment-line)
@@ -409,6 +439,7 @@
     "b s" 'save-buffer              ;; Save current buffer
     "b r" 'revert-buffer            ;; Reload buffer from disk
     "b R" 'rename-buffer            ;; Rename buffer
+    "b l" 'list-buffers             ;; List buffers
 
     ;; Kill multiple
     "b D" 'kill-buffer-and-window)  ;; Kill buffer and close window
@@ -451,3 +482,11 @@
   :config
   (evil-mode 1)
   (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
+
+(use-package treemacs-evil)
+(defun my/toggle-treemacs-focus ()
+  "Toggle focus between Treemacs and the last window."
+  (interactive)
+  (if (string= (buffer-name) "*Treemacs-Framebuffer*")
+      (other-window 1)
+    (treemacs-select-window)))
