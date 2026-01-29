@@ -1,6 +1,5 @@
 ;; This is my emacs init file.
 ;; Some nice things to add would be:
-;; - Font family cycling
 ;; - Make this thing idempotent so I don't have to keep restarting
 
 ;; (setq debug-on-error t)  ;; Uncomment this out to show backtrace on errors
@@ -105,6 +104,9 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (setq frame-title-format "Emacs")
+
+;; Disable needed bindings
+(global-unset-key (kbd "C-r"))
 
 ;; Disable sound
 (setq visible-bell t)
@@ -449,4 +451,3 @@
   :config
   (evil-mode 1)
   (define-key evil-normal-state-map (kbd "C-r") 'evil-redo))
-(global-unset-key (kbd "C-r"))
