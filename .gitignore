@@ -3,3 +3,4 @@
 !.gitmodules
 !.emacs.d/init.el
 !.config/fish/config.fish
+!.config/alacritty/alacritty.toml
