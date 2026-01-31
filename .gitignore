@@ -4,5 +4,7 @@
 !.emacs.d/init.el
 !.config/fish/config.fish
 !.config/alacritty/alacritty.toml
+!.config/alacritty/themes/themes/solarized_dark.toml
+!.config/alacritty/themes/themes/solarized_light.toml
 !.config/zed/settings.json
 !README.md
