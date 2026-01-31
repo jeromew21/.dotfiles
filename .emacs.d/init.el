@@ -116,7 +116,7 @@
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
 
-;; Disable tilde files
+;; Disable backup and autosave files
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
@@ -210,7 +210,8 @@
 ;; Solarized dark is ass imo
 (use-package solarized-theme
   :config
-  (load-theme 'solarized-light t))
+  ;; (load-theme 'solarized-light t))
+  (load-theme 'solarized-dark t))
 
 ;; (use-package ef-themes ;; My endgame dark theme
 ;;   :config
@@ -222,46 +223,15 @@
   :ensure t
   :config
   (super-save-mode +1)
-  (setq super-save-auto-save-when-idle t
-        super-save-idle-duration 5)
+  ;; (setq super-save-auto-save-when-idle t
+  ;;       super-save-idle-duration 5)
   (setq super-save-all-buffers t))
 
 ;; Mode line
-;; Try replacing doom-modeline with a simpler one:
 (use-package mood-line
   :ensure t
   :config
   (mood-line-mode))
-
-;; Or just use the default modeline:
-;; (doom-modeline-mode -1)
-
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :init
-;;   (setq doom-modeline-height 1
-;;         doom-modeline-bar-width 0
-;;         doom-modeline-hud nil
-;;         doom-modeline-icon nil
-;;         doom-modeline-major-mode-icon nil
-;;         doom-modeline-major-mode-color-icon nil
-;;         doom-modeline-buffer-state-icon nil
-;;         doom-modeline-buffer-modification-icon nil
-;;         doom-modeline-enable-word-count nil
-;;         doom-modeline-buffer-encoding nil
-;;         doom-modeline-env-version nil
-;;         doom-modeline-time nil
-;;         doom-modeline-indent-info nil
-;;         doom-modeline-lsp nil
-;;         doom-modeline-github nil
-;;         doom-modeline-github-interval 0
-;;         doom-modeline-minor-modes nil
-;;         doom-modeline-persp-name nil
-;;         doom-modeline-workspace-name nil
-;;         doom-modeline-checker-simple-format t
-;;         doom-modeline-vcs-max-length 12)
-;;   :config
-;;   (doom-modeline-mode 1))
 
 ;; File explorer
 (use-package treemacs
@@ -415,7 +385,8 @@
             (evil-leader-mode 1)
             (evil-normalize-keymaps))) ;; refresh evil maps
   (evil-leader/set-key
-    "x f" 'find-file)
+    "x f" 'find-file
+    "x k" 'kill-current-buffer)
   (evil-leader/set-key "]" 'centaur-tabs-forward)
   (evil-leader/set-key "[" 'centaur-tabs-backward)
   (evil-leader/set-key "/" 'comment-line)
