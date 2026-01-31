@@ -4,7 +4,7 @@ My personal dotfiles.
 NOTE: don't commit anything other than config files.
 
 # Editor
-- Emacs
+- Emacs (Evil bindings)
 - Zed
 - Neovim (Astro)
 

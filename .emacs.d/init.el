@@ -1,23 +1,35 @@
 ;; This is my emacs init file.
 ;; Some nice things to add would be:
-;; - Make this thing idempotent so I don't have to keep restarting
+;; - evil-leader-mode after evaluating this
 
-;; (setq debug-on-error t)  ;; Uncomment this out to show backtrace on errors
+;; Uncomment this out to show backtrace on errors
+;; (setq debug-on-error t)
 
 ;; Speed up startup
-(setq gc-cons-threshold 100000000)
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
+(setq gc-cons-threshold 100000000
+      read-process-output-max (* 1024 1024))
 
-;; Try speed up editor
-(setq redisplay-skip-fontification-on-input t)  ;; Skip font-lock during fast typing
-(setq bidi-inhibit-bpa t)  ;; Disable bidirectional text (if you don't need Arabic/Hebrew)
-(setq-default bidi-display-reordering nil)
-(setq jit-lock-defer-time 0.05)  ;; Defer syntax highlighting slightly
+;; Rendering optimizations
+(setq redisplay-skip-fontification-on-input t
+      fast-but-imprecise-scrolling t
+      redisplay-dont-pause t
+      inhibit-compacting-font-caches t
+      bidi-inhibit-bpa t
+      jit-lock-defer-time 0.05
+      jit-lock-stealth-time nil)
+(setq-default bidi-display-reordering nil)  ;; Buffer-local, needs setq-default
 
-;; Write to custom file
-(setq custom-file (concat user-emacs-directory "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file))
+;; Disable UI elements
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(setq visible-bell t)
+(setq ring-bell-function 'ignore)
+(setq frame-title-format
+      (format "Emacs %d.%d - %%b" emacs-major-version emacs-minor-version))
+
+;; Disable colliding bindings
+(global-unset-key (kbd "C-r"))
 
 ;; Font setup
 (defun my/font-installed-p (font-name)
@@ -83,17 +95,22 @@
                                 (face-attribute 'default :height)))
   (message "Font size reset to: %d" my-default-font-size))
 
+;; NOTE: these are ranked based on my preference.
+;; TODO: save on exit? Right now we always start up with the first one.
 (setq my-font-list
       '("JetBrainsMono Nerd Font"
         "BlexMono Nerd Font"
-        "Comic Code"
         "Inconsolata Nerd Font"
-        "SauceCodePro Nerd Font"
-        "FiraMono Nerd Font"
-        "FiraCode Nerd Font"
-        "MesloLGS Nerd Font"
         "Iosevka Nerd Font"
+        "GeistMono Nerd Font"
+        "MartianMono Nerd Font"
+        "FiraCode Nerd Font"
+        "0xProto Nerd Font"
+        "DepartureMono Nerd Font" ;; NOTE: turn off AA for this one...
+        "Comic Code" ;; NOTE: the line height seems wrong on this one.
+        "MesloLGS Nerd Font"
         "ComicShannsMono Nerd Font"
+        "SauceCodePro Nerd Font"
         "CaskaydiaMono Nerd Font"))
 (setq my-default-font-size 12)
 (setq my-current-font-index 0)
@@ -103,18 +120,10 @@
       (my/set-font initial-font)
     (message "Warning: No fonts from my-font-list are installed!")))
 
-;; Disable UI elements
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(setq frame-title-format "Emacs")
-
-;; Disable needed bindings
-(global-unset-key (kbd "C-r"))
-
-;; Disable sound
-(setq visible-bell t)
-(setq ring-bell-function 'ignore)
+;; Write to custom file
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 ;; Disable backup and autosave files
 (setq make-backup-files nil)
@@ -125,12 +134,16 @@
 (setq make-pointer-invisible t)
 (mouse-avoidance-mode 'banish)
 
-;; Relative line numbers
-(setq display-line-numbers-type 'relative)
+;; Line numbers
+;; The argument against relative line numbers is:
+;; - If yanking multiple lines, you have to add one to the number
+;; - Too much motion on the screen
+;; - May be a bottleneck
+(setq display-line-numbers-type t)
 (setq display-line-numbers-width-start t)
 (global-display-line-numbers-mode)
 
-;; Column limit indicator - 100 for now
+;; Column limit indicator - 100 characters for now
 (setq-default fill-column 100)
 (global-display-fill-column-indicator-mode 1)
 
@@ -149,7 +162,7 @@
     (kill-buffer (current-buffer))))
 (add-hook 'buffer-list-update-hook #'my/kill-buffer-if-file-deleted)
 
-;; Set encoding (May be requirement on Windows only)
+;; Set encoding (NOTE: required on Windows only)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-language-environment 'utf-8)
@@ -174,6 +187,19 @@
 ;; Save sessions
 (desktop-save-mode 1)
 
+;; Markdown mode don't use alternative fonts
+;; FIXME: it doesn't change when fonts get cycled
+(with-eval-after-load 'markdown-mode
+  (set-face-attribute 'markdown-code-face nil
+                      :family (face-attribute 'default :family)
+                      :height (face-attribute 'default :height))
+  (set-face-attribute 'markdown-inline-code-face nil
+                      :family (face-attribute 'default :family)
+                      :height (face-attribute 'default :height))
+  (set-face-attribute 'markdown-pre-face nil
+                      :family (face-attribute 'default :family)
+                      :height (face-attribute 'default :height)))
+
 ;; Set up required packages
 (require 'package)
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -197,26 +223,66 @@
 (setq evil-undo-system 'undo-tree)
 
 ;; Setup theme
-;; NOTE: `M-x eval-buffer` if new theme doesn't load properly.
-;; (use-package almost-mono-themes
-;;   :config
-;;     (load-theme 'almost-mono-gray t)
-;;     (load-theme 'almost-mono-cream t)
-;;     (load-theme 'almost-mono-white t)
-;;     (load-theme 'almost-mono-black t)) ;; Less syntax highlighting, but easy on the eyes
-;; (load-theme 'modus-vivendi-tinted t)
-
-;; As far as light themes go, solarized light is fine.
-;; Solarized dark is ass imo
+;; Themes are set in pairs, my-light-theme and my-dark-theme.
+;; NOTE: evaluate and/or my/toggle-theme if new theme doesn't load properly.
 (use-package solarized-theme
-  :config
-  ;; (load-theme 'solarized-light t))
-  (load-theme 'solarized-dark t))
+  :ensure t)
+;; (use-package ef-themes
+;;   :ensure t)
+;; (use-package almost-mono-themes
+;;   :ensure t)
 
-;; (use-package ef-themes ;; My endgame dark theme
-;;   :config
-;;   ;; (load-theme 'ef-dark t))
-;;   (load-theme 'ef-light t))
+(setq my-current-theme-is-dark nil)
+(setq my-theme-state-file (concat user-emacs-directory "theme-state.el"))
+
+(setq my-light-theme 'solarized-light)
+(setq my-dark-theme 'solarized-dark)
+
+;; (setq my-light-theme 'ef-light)
+;; (setq my-dark-theme 'ef-dark)
+
+;; (setq my-light-theme 'modus-operandi-tinted)
+;; (setq my-dark-theme 'modus-vivendi-tinted)
+
+;; (setq my-light-theme 'almost-mono-white)
+;; (setq my-dark-theme 'almost-mono-black)
+
+;; (setq my-light-theme 'almost-mono-cream)
+;; (setq my-dark-theme 'almost-mono-gray)
+
+;; Load saved theme state
+(defun my/load-theme-state ()
+  "Load theme state from file."
+  (when (file-exists-p my-theme-state-file)
+    (load my-theme-state-file)))
+
+;; Save theme state
+(defun my/save-theme-state ()
+  "Save current theme state to file."
+  (with-temp-file my-theme-state-file
+    (prin1 `(setq my-current-theme-is-dark ,my-current-theme-is-dark) (current-buffer))))
+
+;; Toggle function with auto-save
+(defun my/toggle-theme ()
+  "Toggle between light and dark theme."
+  (interactive)
+  (mapc #'disable-theme custom-enabled-themes)
+  (if my-current-theme-is-dark
+      (progn
+        (load-theme my-light-theme t)
+        (setq my-current-theme-is-dark nil)
+        (message "Switched to light theme: %s" my-light-theme))
+    (progn
+      (load-theme my-dark-theme t)
+      (setq my-current-theme-is-dark t)
+      (message "Switched to dark theme: %s" my-dark-theme)))
+  (my/save-theme-state))  ;; Auto-save after toggle
+
+;; Load state and apply theme on startup
+(my/load-theme-state)
+(if (bound-and-true-p my-current-theme-is-dark)
+    (load-theme my-dark-theme t)
+  (load-theme my-light-theme t))
 
 ;; Autosaving
 (use-package super-save
@@ -236,12 +302,10 @@
 ;; File explorer
 (use-package treemacs
   :ensure t
-  :config
-  ;; Visual improvements
   :init
-  (setq treemacs-width 40
-        treemacs-indentation 2
+  (setq treemacs-indentation 2
         treemacs-no-png-images t
+        ;; treemacs-width 40
         treemacs-is-never-other-window t)
   :config
   (set-face-attribute 'treemacs-root-face nil
@@ -253,14 +317,6 @@
   (treemacs-filewatch-mode -1)
   (add-hook 'treemacs-mode-hook
             (lambda () (display-line-numbers-mode -1))))
-
-;; [DISABLED] Project management
-;; (use-package projectile
-;;   :ensure t
-;;   :config (projectile-mode 1))
-;;  (with-eval-after-load 'evil
-;;  (define-key evil-normal-state-map (kbd "<f5>") #'projectile-run-project))
-;; (treemacs-project-follow-mode t)
 
 ;; Tabbed layout
 (use-package centaur-tabs
@@ -308,8 +364,8 @@
   :ensure t
   :hook (prog-mode . company-mode)
   :config
-  (setq company-idle-delay 0.1
-        company-minimum-prefix-length 1))
+  (setq company-idle-delay 0.2
+        company-minimum-prefix-length 2))
 
 ;; Yasnippets for autocompletion
 (use-package yasnippet
@@ -372,6 +428,12 @@
             (electric-pair-mode 1)
             (local-set-key (kbd "RET") 'c-context-line-break)))
 
+;; Kill ring
+(use-package browse-kill-ring
+  :ensure t
+  :config
+  (browse-kill-ring-default-keybindings))
+
 ;; Leader for evil
 ;; NOTE: when evaluating this buffer, afterwards, execute M-x evil-leader-mode
 (use-package evil-leader
@@ -380,10 +442,6 @@
   (global-evil-leader-mode)
   :config
   (evil-leader/set-leader "<SPC>")
-  (add-hook 'treemacs-mode-hook
-          (lambda ()
-            (evil-leader-mode 1)
-            (evil-normalize-keymaps))) ;; refresh evil maps
   (evil-leader/set-key
     "x f" 'find-file
     "x k" 'kill-current-buffer)
@@ -398,6 +456,7 @@
     "l o" 'lsp-organize-imports       ;; Organize imports (Python)
     "l R" 'lsp-workspace-restart)     ;; Restart LSP server
   (evil-leader/set-key "s g" 'rgrep)  ;; Grep in directory
+  (evil-leader/set-key "y" 'browse-kill-ring)
   (evil-leader/set-key
     ;; Buffer navigation
     "b b" 'switch-to-buffer         ;; Interactive buffer switch
@@ -417,10 +476,12 @@
   (evil-leader/set-key "!" 'shell-command)
   (evil-leader/set-key
     "t t" 'my/vterm                    ;; If you have vterm installed
-    "t e" 'eshell                   ;; Built-in Emacs shell
+    ;; "t e" 'eshell                   ;; Built-in Emacs shell
     "t s" 'shell)                   ;; Built-in shell
   (evil-leader/set-key "SPC" 'execute-extended-command)  ;; SPC SPC = M-x
   (evil-leader/set-key
+    ;; Appearance
+    "f t" 'my/toggle-theme
     "f +" 'my/increase-font-size
     "f -" 'my/decrease-font-size
     "f =" 'my/reset-font-size
@@ -461,3 +522,15 @@
   (if (string= (buffer-name) "*Treemacs-Framebuffer*")
       (other-window 1)
     (treemacs-select-window)))
+
+;; Use small cursor in terminal mode
+(use-package evil-terminal-cursor-changer
+  :ensure t
+  :if (not (display-graphic-p))
+  :config
+  (evil-terminal-cursor-changer-activate)
+  (setq evil-motion-state-cursor 'box
+        evil-visual-state-cursor 'box
+        evil-normal-state-cursor 'box
+        evil-insert-state-cursor 'bar
+        evil-emacs-state-cursor  'hbar))

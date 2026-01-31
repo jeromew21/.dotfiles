@@ -4,3 +4,5 @@
 !.emacs.d/init.el
 !.config/fish/config.fish
 !.config/alacritty/alacritty.toml
+!.config/zed/settings.json
+!README.md
