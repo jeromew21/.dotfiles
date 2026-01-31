@@ -7,4 +7,5 @@
 !.config/alacritty/solarized_dark.toml
 !.config/alacritty/solarized_light.toml
 !.config/zed/settings.json
+!.config/ghostty/config
 !README.md

@@ -13,8 +13,8 @@ NOTE: don't commit anything other than config files.
 
 # Terminal
 - Alacritty
+- Ghostty
 - iTerm2 (macOS only)
-- Konsole (Linux only)
 
 # Fonts
 - Editor: JetBrains Mono
