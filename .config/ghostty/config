@@ -48,5 +48,6 @@
 # # Just for example:
 # resize-overlay-duration = 4s 200ms
 
-theme = Solarized Dark Patched
-font-family = "Iosevka Nerd Font" 
+theme = iTerm2 Solarized Light
+font-family = "Iosevka Nerd Font"
+font-size = 14
