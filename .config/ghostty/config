@@ -49,5 +49,5 @@
 # resize-overlay-duration = 4s 200ms
 
 theme = iTerm2 Solarized Light
-font-family = "Iosevka Nerd Font"
+font-family = "JetBrainsMono Nerd Font"
 font-size = 14
