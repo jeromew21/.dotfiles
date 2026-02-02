@@ -98,19 +98,31 @@
 ;; NOTE: these are ranked based on my preference.
 ;; TODO: save on exit? Right now we always start up with the first one.
 (setq my-font-list
-      '("JetBrainsMono Nerd Font"
-        "BlexMono Nerd Font"
-        "Inconsolata Nerd Font"
-        "Iosevka Nerd Font"
-        "GeistMono Nerd Font"
-        "MartianMono Nerd Font"
-        "FiraCode Nerd Font"
-        "0xProto Nerd Font"
-        "DepartureMono Nerd Font" ;; NOTE: turn off AA for this one...
-        "Comic Code" ;; NOTE: the line height seems wrong on this one.
-        "MesloLGS Nerd Font"
-        "ComicShannsMono Nerd Font"
-        "SauceCodePro Nerd Font"
+      '("JetBrainsMono Nerd Font" ;; Current favorite, all round good.
+        "BlexMono Nerd Font" ;; Really solid, no notes
+        "DepartureMono Nerd Font" ;; Nice retro font, very readable but not ugly. Maybe try disabling AA?
+        "Comic Code" ;; Good font, but the line height seems wrong on this one on Emacs.
+        "Inconsolata Nerd Font" ;; Another solid all-rounder. Weirdly, it's smaller than the others
+        "Iosevka Nerd Font" ;; Efficient, skinny, iconic. The Tsoding font.
+        "FiraCode Nerd Font" ;; Iconic, sharp. Feels almost like getting stabbed to read. Slightly wide kerning. Very nice on most screens. The Primagen font.
+        "0xProto Nerd Font" ;; Readable, similar to Cascadia Code but prettier.
+        "CodeNewRoman Nerd Font" ;; Smaller side, nice font. Very unprovocative. Familiar, like I've seen it somewhere before.
+        "Cousine Nerd Font" ;; Similar to Plex Mono, nothing special
+        "AtkynsonMono Nerd Font" ;; Similar to Source Code Pro and Inconsolata
+        "IntoneMono Nerd Font" ;; Similar to Code New Roman. Unprovocative.
+        "RobotoMono Nerd Font" ;; Readable, similar to JetBrains Mono
+        "Noto Nerd Font" ;; Nice and similar to Plex Mono
+        "Lilex Nerd Font" ;; Nice, I like this one, it's somewhere in between Bitstream Vera and Cascadia
+        "DroidSansM Nerd Font" ;; Boring, reminds me of Lucida Console.
+        "EnvyCodeR Nerd Font" ;; Probably not going to keep around, but it's interesting.
+        "CommitMono Nerd Font" ;; Very round, it's interesting.
+        "BitstromWera Nerd Font" ;; Classic, very boring. Like Fira Code but not pointy.
+        "AnonymicePro Nerd Font" ;; Interesting, similar to Inconsolata but spicier.
+        "AdwaitaMono Nerd Font" ;; Not exciting at all.
+        "GeistMono Nerd Font" ;; Very round and slightly weird, but fine.
+        "MesloLGS Nerd Font" ;; How is this different from Bitstream Vera?
+        "ComicShannsMono Nerd Font" ;; Inferior to Comic Code
+        "SauceCodePro Nerd Font" ;; I don't like it.
         "CaskaydiaMono Nerd Font"))
 (setq my-default-font-size 12)
 (setq my-current-font-index 0)
