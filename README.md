@@ -6,7 +6,7 @@ NOTE: don't commit anything other than config files.
 # Editor
 - Emacs (Evil bindings)
 - Zed
-- Neovim (Astro)
+- Neovim
 
 # Shell
 - Fish with Vi bindings
@@ -15,6 +15,9 @@ NOTE: don't commit anything other than config files.
 - Alacritty
 - Ghostty
 
+# Theme
+- Solarized Light
+
 # Fonts
 - Editor: JetBrains Mono
-- Terminal: Iosevka
+- Terminal: JetBrains Mono

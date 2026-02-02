@@ -16,7 +16,7 @@ if test (uname) = Linux
 end
 
 # Alias
-# alias vim='nvim'
+alias vim='nvim'
 
 # VI mode with cursor shapes
 fish_vi_key_bindings
