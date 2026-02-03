@@ -1,9 +1,10 @@
 ;; This is my emacs init file.
-;; Some nice things to add would be:
-;; - evil-leader-mode after evaluating this
+;; NOTE: reload this with my/reload-init
+
+(require 'cl-lib)
 
 ;; Uncomment this out to show backtrace on errors
-;; (setq debug-on-error t)
+(setq debug-on-error t)
 
 ;; Speed up startup
 (setq gc-cons-threshold 100000000
@@ -32,6 +33,57 @@
 (global-unset-key (kbd "C-r"))
 
 ;; Font setup
+;; NOTE: these are ranked based on my preference.
+;; TODO: save on exit? Right now we always start up with the first one.
+(setq my-font-list
+      '("JetBrainsMono Nerd Font"   ;; (10/10) Current favorite, all round good.
+        "BlexMono Nerd Font"        ;; ( 9/10) Really solid, no notes
+        "JuliaMono"                 ;; ( 9/10) Pretty good. Like 0xProto but less going on.
+        "RecMonoLinear Nerd Font"   ;; ( 9/10) Nice font, like Fira but better.
+        "RecMonoCasual Nerd Font"   ;; Goofy version of Rec Mono.
+        "FantasqueSansM Nerd Font"
+        "Sudo Var"                  ;; ( 8/10)
+        "Comic Code"                ;; ( 9/10) Good font, but the line height seems wrong on this one on Emacs.
+        "Inconsolata Nerd Font"     ;; ( 9/10) Another solid all-rounder. Weirdly, it's smaller than the others.
+        "VictorMono Nerd Font"      ;; ( 8/10) Futuristic and thin, nice.
+        "CommitMono Nerd Font"      ;; ( 7/10) Very round and with serifs, it's interesting. Similar to Inconsolata.
+        "Maple Mono NL"             ;; ( 7/10) Cutesy, Japanese vibes.
+        "DepartureMono Nerd Font"   ;; ( 8/10) Nice retro font, very readable but not ugly. Maybe try disabling AA?
+        "0xProto Nerd Font"         ;; ( 8/10) Dyslexic font vibes. Readable, very high x-height, like a better Cascadia Code.
+        "Hurmit Nerd Font"          ;; ( 7/10) Unique, Reads okay
+        "Iosevka Nerd Font"         ;; ( 7/10) Efficient, skinny, iconic. The Tsoding font.
+        "FiraCode Nerd Font"        ;; ( 8/10) Iconic, sharp. Kind of wide. Feels almost like getting stabbed to read. Very nice on most screens. The Primagen font.
+        "SF Mono"                   ;; ( 8/10) Solid, similar to JetBrains mono, worse numbers.
+        "GeistMono Nerd Font"       ;; ( 6/10) Very round and slightly weird, but fine.
+        "AnonymicePro Nerd Font"    ;; ( 7/10) Interesting, similar to Inconsolata but spicier.
+        "Monoid Nerd Font" ;; Thin like Iosevka.
+        "Cousine Nerd Font" ;; Highly familiar looking font. Identical as Liberation Mono.
+        "RobotoMono Nerd Font" ;; Readable, similar to JetBrains Mono. A bit boring.
+        "NotoMono Nerd Font" ;; Nice, inoffenseive and similar to Fira and Plex Mono. Similar to Droid Sans Mono.
+        "DroidSansM Nerd Font" ;; Boring, reminds me of Lucida Console. Similar to Noto Mono.
+        "SpaceMono Nerd Font" ;; Very round
+        "Lekton Nerd Font" ;; Light
+        "ProFont Nerd Font" ;; Small
+        "AurulentSansM Nerd Font"
+        "3270 Nerd Font"
+        "MartianMono Nerd Font" ;; Round
+        "AverageMono"               ;; (6/10)  Like Courier New. Typewriter font.
+        "Monofur Nerd Font" ;; Futuristic and curvy. A little too much.
+        "ShureTechMono Nerd Font"   ;; Futuristic and simple
+        "ProggyClean Nerd Font"
+        "OverpassM Nerd Font"       ;; ( 6/10) Too wide
+        "AtkynsonMono Nerd Font"    ;; Similar to Source Code Pro and Inconsolata
+        "CodeNewRoman Nerd Font" ;; On the smaller side. Very friendly and unprovocative.
+        "EnvyCodeR Nerd Font" ;; Probably not going to keep around, but it's interesting.
+        "Hack Nerd Font"
+        "MesloLGS Nerd Font" ;; How is this different from Bitstream Vera?
+        "ComicShannsMono Nerd Font" ;; Inferior to Comic Code
+        "SauceCodePro Nerd Font"
+        "CaskaydiaMono Nerd Font"))
+
+(setq my-default-font-size 12)
+(setq my-font-state-file (concat user-emacs-directory "font-state.el"))
+
 (defun my/font-installed-p (font-name)
   "Check if FONT-NAME is installed on the system."
   (member font-name (font-family-list)))
@@ -40,28 +92,61 @@
   "Return the first available font from FONT-LIST, or nil if none found."
   (seq-find #'my/font-installed-p font-list))
 
+(defun my/save-font-state ()
+  "Save font state to file."
+  (with-temp-file my-font-state-file
+    (prin1 `(setq my-current-font-family ,my-current-font-family)
+           (current-buffer))))
+
+(defun my/load-font-state ()
+  "Load font state from file."
+  (when (file-exists-p my-font-state-file)
+    (load my-font-state-file)))
+
 (defun my/set-font (font-name)
   "Set the font to FONT-NAME if available."
   (when (my/font-installed-p font-name)
     (set-face-attribute 'default nil
                         :family font-name
                         :height (* my-default-font-size 10))
+    (setq my-current-font-family font-name)
+    (my/save-font-state)
     (message "Font set to: %s" font-name)
     t))
+
+(defun my/show-current-font ()
+  "Display the current font family."
+  (interactive)
+  (message "Current font: %s" (face-attribute 'default :family)))
 
 (defun my/cycle-font ()
   "Cycle through available fonts in my-font-list."
   (interactive)
-  (let ((available-fonts (seq-filter #'my/font-installed-p my-font-list)))
-    (if (null available-fonts)
-        (message "No fonts from the list are installed!")
-      (setq my-current-font-index
-            (mod (1+ my-current-font-index) (length available-fonts)))
-      (let ((next-font (nth my-current-font-index available-fonts)))
-        (when (my/set-font next-font)
+  (let* ((available-fonts (seq-filter #'my/font-installed-p my-font-list))
+         (current-index (or (cl-position my-current-font-family available-fonts :test #'string=) -1))
+         (next-index (mod (1+ current-index) (length available-fonts)))
+         (next-font (nth next-index available-fonts)))
+    (if next-font
+        (progn
+          (my/set-font next-font)
           ;; Update centaur-tabs font too
           (when (featurep 'centaur-tabs)
-            (centaur-tabs-change-fonts next-font (* my-default-font-size 10))))))))
+            (centaur-tabs-change-fonts next-font (* my-default-font-size 10))))
+      (message "No fonts from the list are installed!"))))
+
+(defun my/set-font-interactive ()
+  "Prompt for a font name and set it."
+  (interactive)
+  (let ((font-name (completing-read "Font: " (font-family-list))))
+    (my/set-font font-name)))
+
+(my/load-font-state)
+
+(let ((font-to-use (if (and (boundp 'my-current-font-family)
+                            (my/font-installed-p my-current-font-family))
+                       my-current-font-family
+                     "JetBrainsMono Nerd Font")))  ;; Fallback
+  (my/set-font font-to-use))
 
 (defun my/increase-font-size ()
   "Increase font size by 1."
@@ -95,42 +180,15 @@
                                 (face-attribute 'default :height)))
   (message "Font size reset to: %d" my-default-font-size))
 
-;; NOTE: these are ranked based on my preference.
-;; TODO: save on exit? Right now we always start up with the first one.
-(setq my-font-list
-      '("JetBrainsMono Nerd Font" ;; Current favorite, all round good.
-        "BlexMono Nerd Font" ;; Really solid, no notes
-        "DepartureMono Nerd Font" ;; Nice retro font, very readable but not ugly. Maybe try disabling AA?
-        "Comic Code" ;; Good font, but the line height seems wrong on this one on Emacs.
-        "Inconsolata Nerd Font" ;; Another solid all-rounder. Weirdly, it's smaller than the others
-        "Iosevka Nerd Font" ;; Efficient, skinny, iconic. The Tsoding font.
-        "FiraCode Nerd Font" ;; Iconic, sharp. Feels almost like getting stabbed to read. Slightly wide kerning. Very nice on most screens. The Primagen font.
-        "0xProto Nerd Font" ;; Readable, similar to Cascadia Code but prettier.
-        "CodeNewRoman Nerd Font" ;; Smaller side, nice font. Very unprovocative. Familiar, like I've seen it somewhere before.
-        "Cousine Nerd Font" ;; Similar to Plex Mono, nothing special
-        "AtkynsonMono Nerd Font" ;; Similar to Source Code Pro and Inconsolata
-        "IntoneMono Nerd Font" ;; Similar to Code New Roman. Unprovocative.
-        "RobotoMono Nerd Font" ;; Readable, similar to JetBrains Mono
-        "Noto Nerd Font" ;; Nice and similar to Plex Mono
-        "Lilex Nerd Font" ;; Nice, I like this one, it's somewhere in between Bitstream Vera and Cascadia
-        "DroidSansM Nerd Font" ;; Boring, reminds me of Lucida Console.
-        "EnvyCodeR Nerd Font" ;; Probably not going to keep around, but it's interesting.
-        "CommitMono Nerd Font" ;; Very round, it's interesting.
-        "BitstromWera Nerd Font" ;; Classic, very boring. Like Fira Code but not pointy.
-        "AnonymicePro Nerd Font" ;; Interesting, similar to Inconsolata but spicier.
-        "AdwaitaMono Nerd Font" ;; Not exciting at all.
-        "GeistMono Nerd Font" ;; Very round and slightly weird, but fine.
-        "MesloLGS Nerd Font" ;; How is this different from Bitstream Vera?
-        "ComicShannsMono Nerd Font" ;; Inferior to Comic Code
-        "SauceCodePro Nerd Font" ;; I don't like it.
-        "CaskaydiaMono Nerd Font"))
-(setq my-default-font-size 12)
-(setq my-current-font-index 0)
-
-(let ((initial-font (my/get-first-available-font my-font-list)))
-  (if initial-font
-      (my/set-font initial-font)
-    (message "Warning: No fonts from my-font-list are installed!")))
+;; Reload init safely
+(defun my/reload-init ()
+  "Reload init.el and re-enable evil-leader."
+  (interactive)
+  (load-file user-init-file)
+  (when (fboundp 'evil-leader-mode)
+    (evil-leader-mode 1)
+    (evil-normalize-keymaps))
+  (message "Init reloaded and evil-leader re-enabled"))
 
 ;; Write to custom file
 (setq custom-file (concat user-emacs-directory "custom.el"))
@@ -167,6 +225,7 @@
 (setq global-auto-revert-non-file-buffers t) ;; Also revert Dired buffers
 
 ;; Kill buffers for deleted files automatically
+;; TODO: fix this, it doesn't work, especially dangerous during LSP mode
 (defun my/kill-buffer-if-file-deleted ()
   "Kill buffer if its file has been deleted."
   (when (and buffer-file-name
@@ -200,7 +259,7 @@
 (desktop-save-mode 1)
 
 ;; Markdown mode don't use alternative fonts
-;; FIXME: it doesn't change when fonts get cycled
+;; TODO: it doesn't change when fonts get cycled, fix this
 (with-eval-after-load 'markdown-mode
   (set-face-attribute 'markdown-code-face nil
                       :family (face-attribute 'default :family)
@@ -454,6 +513,7 @@
   (global-evil-leader-mode)
   :config
   (evil-leader/set-leader "<SPC>")
+  (evil-leader/set-key "r r" 'my/reload-init)
   (evil-leader/set-key
     "x f" 'find-file
     "x k" 'kill-current-buffer)
@@ -497,6 +557,8 @@
     "f +" 'my/increase-font-size
     "f -" 'my/decrease-font-size
     "f =" 'my/reset-font-size
+    "f ?" 'my/show-current-font
+    "f f" 'my/set-font-interactive
     "f c" 'my/cycle-font)
   (evil-leader/set-key
     ;; Splits
