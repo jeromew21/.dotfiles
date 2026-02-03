@@ -1,10 +1,11 @@
 ;; This is my emacs init file.
 ;; NOTE: reload this with my/reload-init
+;; TODO: disable bolding
 
 (require 'cl-lib)
 
 ;; Uncomment this out to show backtrace on errors
-(setq debug-on-error t)
+;; (setq debug-on-error t)
 
 ;; Speed up startup
 (setq gc-cons-threshold 100000000
@@ -33,53 +34,58 @@
 (global-unset-key (kbd "C-r"))
 
 ;; Font setup
-;; NOTE: these are ranked based on my preference.
-;; TODO: save on exit? Right now we always start up with the first one.
 (setq my-font-list
-      '("JetBrainsMono Nerd Font"   ;; (10/10) Current favorite, all round good.
-        "BlexMono Nerd Font"        ;; ( 9/10) Really solid, no notes
-        "JuliaMono"                 ;; ( 9/10) Pretty good. Like 0xProto but less going on.
+      '("JetBrains Mono"            ;; (10/10) Current favorite, all round good.
         "RecMonoLinear Nerd Font"   ;; ( 9/10) Nice font, like Fira but better.
-        "RecMonoCasual Nerd Font"   ;; Goofy version of Rec Mono.
-        "FantasqueSansM Nerd Font"
-        "Sudo Var"                  ;; ( 8/10)
-        "Comic Code"                ;; ( 9/10) Good font, but the line height seems wrong on this one on Emacs.
+        "IBM Plex Mono"             ;; ( 9/10) Really solid, no notes
+        "Sudo Var"                  ;; ( 9/10) Like Iosevka but prettier
         "Inconsolata Nerd Font"     ;; ( 9/10) Another solid all-rounder. Weirdly, it's smaller than the others.
+        "Comic Code"                ;; ( 9/10) Good font, but the line height seems wrong on this one on Emacs.
         "VictorMono Nerd Font"      ;; ( 8/10) Futuristic and thin, nice.
-        "CommitMono Nerd Font"      ;; ( 7/10) Very round and with serifs, it's interesting. Similar to Inconsolata.
-        "Maple Mono NL"             ;; ( 7/10) Cutesy, Japanese vibes.
+        "JuliaMono"                 ;; ( 8/10) Pretty good. Like 0xProto but less going on.
+        "CommitMono Nerd Font"      ;; ( 8/10) Very round and with serifs, it's interesting. Similar to Inconsolata.
+        "RecMonoCasual Nerd Font"   ;; ( 8/10) Goofy version of Rec Mono.
         "DepartureMono Nerd Font"   ;; ( 8/10) Nice retro font, very readable but not ugly. Maybe try disabling AA?
+        "Fira Code"                 ;; ( 8/10) Iconic, sharp, wide, to pointy. Very nice on most screens. The Primagen font.
         "0xProto Nerd Font"         ;; ( 8/10) Dyslexic font vibes. Readable, very high x-height, like a better Cascadia Code.
+        "M+1Code Nerd Font"         ;; ( 8/10) Good vibes.
+        "Terminus"                  ;; ( 7/10) Nice retro font.
+        "Cousine Nerd Font"         ;; ( 7/10) Highly familiar looking font. Identical as Liberation Mono.
         "Hurmit Nerd Font"          ;; ( 7/10) Unique, Reads okay
+        "Maple Mono NL"             ;; ( 7/10) Cutesy, Japanese vibes.
         "Iosevka Nerd Font"         ;; ( 7/10) Efficient, skinny, iconic. The Tsoding font.
-        "FiraCode Nerd Font"        ;; ( 8/10) Iconic, sharp. Kind of wide. Feels almost like getting stabbed to read. Very nice on most screens. The Primagen font.
-        "SF Mono"                   ;; ( 8/10) Solid, similar to JetBrains mono, worse numbers.
-        "GeistMono Nerd Font"       ;; ( 6/10) Very round and slightly weird, but fine.
+        "SF Mono"                   ;; ( 7/10) Solid, similar to JetBrains mono, worse numbers.
         "AnonymicePro Nerd Font"    ;; ( 7/10) Interesting, similar to Inconsolata but spicier.
-        "Monoid Nerd Font" ;; Thin like Iosevka.
-        "Cousine Nerd Font" ;; Highly familiar looking font. Identical as Liberation Mono.
-        "RobotoMono Nerd Font" ;; Readable, similar to JetBrains Mono. A bit boring.
-        "NotoMono Nerd Font" ;; Nice, inoffenseive and similar to Fira and Plex Mono. Similar to Droid Sans Mono.
-        "DroidSansM Nerd Font" ;; Boring, reminds me of Lucida Console. Similar to Noto Mono.
-        "SpaceMono Nerd Font" ;; Very round
-        "Lekton Nerd Font" ;; Light
-        "ProFont Nerd Font" ;; Small
-        "AurulentSansM Nerd Font"
-        "3270 Nerd Font"
-        "MartianMono Nerd Font" ;; Round
-        "AverageMono"               ;; (6/10)  Like Courier New. Typewriter font.
-        "Monofur Nerd Font" ;; Futuristic and curvy. A little too much.
-        "ShureTechMono Nerd Font"   ;; Futuristic and simple
-        "ProggyClean Nerd Font"
-        "OverpassM Nerd Font"       ;; ( 6/10) Too wide
-        "AtkynsonMono Nerd Font"    ;; Similar to Source Code Pro and Inconsolata
-        "CodeNewRoman Nerd Font" ;; On the smaller side. Very friendly and unprovocative.
-        "EnvyCodeR Nerd Font" ;; Probably not going to keep around, but it's interesting.
-        "Hack Nerd Font"
-        "MesloLGS Nerd Font" ;; How is this different from Bitstream Vera?
-        "ComicShannsMono Nerd Font" ;; Inferior to Comic Code
-        "SauceCodePro Nerd Font"
-        "CaskaydiaMono Nerd Font"))
+        "Overpass Mono"             ;; ( 7/10) Nerd font version is broken
+        "FantasqueSansM Nerd Font"  ;; ( 7/10) Small, but nice goofy font.
+        "Binchotan_Sharp"           ;; ( 7/10) Small, futuristic, Asian vibes
+        "RobotoMono Nerd Font"      ;; ( 7/10) Readable, similar to JetBrains Mono. A bit boring.
+        "NotoMono Nerd Font"        ;; ( 7/10) Boring, inoffensive and similar to Fira and Plex Mono. Similar to Lucida Console.
+        "Monaco"                    ;; ( 7/10) Iconic, boring.
+        "DM Mono"                   ;; ( 7/10) Curvy and round, similar to 0xProto and Geist
+        "GeistMono Nerd Font"       ;; ( 6/10) Very round and slightly weird, but fine.
+        "Lekton Nerd Font"          ;; ( 6/10) Light, small, futuristic
+        "Monoid Nerd Font"          ;; ( 6/10) Thin like Iosevka.
+        "ProFont IIx Nerd Font"     ;; ( 6/10) Simple, retro-futuristic
+        "ShureTechMono Nerd Font"   ;; ( 6/10) Futuristic and simple
+        "CodeNewRoman Nerd Font"    ;; ( 6/10) On the smaller side. Very friendly and unprovocative. Monaco?
+        "EnvyCodeR Nerd Font"       ;; ( 6/10)
+        "DejaVu Sans Mono"          ;; ( 6/10) Boring, but solid.
+        "Hack Nerd Font"            ;; ( 6/10) Boring
+        "MesloLGS Nerd Font"        ;; ( 6/10) Boring
+        "B612 Mono"                 ;; ( 5/10) Weird parenthesis
+        "AverageMono"               ;; ( 5/10) Like Courier New. Typewriter font.
+        "ComicShannsMono Nerd Font" ;; ( 5/10) Inferior to Comic Code
+        "AurulentSansM Nerd Font"   ;; ( 5/10) Similar to Code New Roman
+        "AtkynsonMono Nerd Font"    ;; ( 5/10) Similar to Source Code Pro and Inconsolata
+        "IntoneMono Nerd Font"      ;; ( 5/10) Squished, too wide.
+        "MartianMono Nerd Font"     ;; ( 5/10) Thicc and curvy
+        "SpaceMono Nerd Font"       ;; ( 5/10) Very round
+        "Monofur Nerd Font"         ;; ( 5/10) Futuristic and curvy. A little too much.
+        "ProggyClean Nerd Font"     ;; ( 5/10) Too small and bad kerning
+        "Source Code Pro"    ;; ( 4/10)
+        "CaskaydiaMono Nerd Font"   ;; ( 4/10)
+        ))
 
 (setq my-default-font-size 12)
 (setq my-font-state-file (concat user-emacs-directory "font-state.el"))
@@ -111,6 +117,8 @@
                         :height (* my-default-font-size 10))
     (setq my-current-font-family font-name)
     (my/save-font-state)
+    (when (featurep 'centaur-tabs)
+      (centaur-tabs-change-fonts font-name (* my-default-font-size 10)))
     (message "Font set to: %s" font-name)
     t))
 
@@ -127,11 +135,7 @@
          (next-index (mod (1+ current-index) (length available-fonts)))
          (next-font (nth next-index available-fonts)))
     (if next-font
-        (progn
-          (my/set-font next-font)
-          ;; Update centaur-tabs font too
-          (when (featurep 'centaur-tabs)
-            (centaur-tabs-change-fonts next-font (* my-default-font-size 10))))
+        (progn (my/set-font next-font))
       (message "No fonts from the list are installed!"))))
 
 (defun my/set-font-interactive ()
@@ -295,9 +299,24 @@
 
 ;; Setup theme
 ;; Themes are set in pairs, my-light-theme and my-dark-theme.
-;; NOTE: evaluate and/or my/toggle-theme if new theme doesn't load properly.
+;; NOTE: evaluate this, and/or my/toggle-theme if new theme doesn't load properly.
+(defun my/disable-all-bold ()
+  "Remove bold from all faces."
+  (mapc
+   (lambda (face)
+     (when (eq (face-attribute face :weight) 'bold)
+       (set-face-attribute face nil :weight 'normal)))
+   (face-list)))
+
+;; Run after loading any theme
+(advice-add 'load-theme :after
+            (lambda (&rest _)
+              (my/disable-all-bold)))
+
 (use-package solarized-theme
-  :ensure t)
+  :ensure t
+  :init
+  (setq solarized-use-bold nil))
 ;; (use-package ef-themes
 ;;   :ensure t)
 ;; (use-package almost-mono-themes
