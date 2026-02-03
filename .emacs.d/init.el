@@ -35,7 +35,7 @@
 
 ;; Font setup
 (setq my-font-list
-      '("JetBrains Mono"            ;; (10/10) Current favorite, all round good.
+      '("JetBrains Mono NL"            ;; (10/10) Current favorite, all round good.
         "RecMonoLinear Nerd Font"   ;; ( 9/10) Nice font, like Fira but better.
         "IBM Plex Mono"             ;; ( 9/10) Really solid, no notes
         "Sudo Var"                  ;; ( 9/10) Like Iosevka but prettier
