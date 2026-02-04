@@ -511,6 +511,8 @@
   :after python
   :hook (python-mode . python-black-on-save-mode))  ;; Auto-format on save
 
+(use-package zig-mode)
+
 ;; C++ mode hooks
 (add-hook 'c++-mode-hook
           (lambda ()
