@@ -36,31 +36,30 @@
 ;; Font setup
 (setq my-font-list
       '("JetBrains Mono"            ;; (10/10) Current favorite, all round good.
-        "IBM Plex Mono"             ;; ( 9/10) Really solid, no notes
+        "RecMonoCasual Nerd Font"   ;; ( 9/10) Goofy version of Rec Mono. This might be the one.
         "RecMonoLinear Nerd Font"   ;; ( 9/10) Nice font, like Fira but better.
-        "RecMonoCasual Nerd Font"   ;; ( 9/10) Goofy version of Rec Mono.
-        "Sudo Var"                  ;; ( 9/10) Like Iosevka but prettier
+        "0xProto Nerd Font"         ;; ( 9/10) Dyslexic font vibes. Readable, very high x-height, like a better Cascadia Code.
+        "FantasqueSansM Nerd Font"  ;; ( 9/10) Small, but nice goofy font.
+        "M+1Code Nerd Font"         ;; ( 9/10) Slightly villainous vibes. Similar to Sudo Var but pointier. Looks better big.
+        "IBM Plex Mono"             ;; ( 9/10) Really solid, no notes
         "Inconsolata Nerd Font"     ;; ( 9/10) Another solid all-rounder. Weirdly, it's smaller than the others.
         "Comic Code"                ;; ( 9/10) Good font, but the line height seems wrong on this one on Emacs.
-        "0xProto Nerd Font"         ;; ( 9/10) Dyslexic font vibes. Readable, very high x-height, like a better Cascadia Code.
+        "Fira Code"                 ;; ( 8/10) Iconic, sharp, wide, to pointy. Very nice on most screens. The Primagen font.
+        "CommitMono Nerd Font"      ;; ( 8/10) Very round and with serifs, it's interesting. Similar to Inconsolata.
         "VictorMono Nerd Font"      ;; ( 8/10) Futuristic and thin, nice.
         "JuliaMono"                 ;; ( 8/10) Pretty good. Like 0xProto and Fira but less going on.
-        "CommitMono Nerd Font"      ;; ( 8/10) Very round and with serifs, it's interesting. Similar to Inconsolata.
         "DepartureMono Nerd Font"   ;; ( 8/10) Nice retro font, very readable but not ugly. Maybe try disabling AA?
-        "Fira Code"                 ;; ( 8/10) Iconic, sharp, wide, to pointy. Very nice on most screens. The Primagen font.
-        "FantasqueSansM Nerd Font"  ;; ( 8/10) Small, but nice goofy font.
-        "M+1Code Nerd Font"         ;; ( 8/10) Good vibes.
+        "Sudo Var"                  ;; ( 8/10) Like Iosevka but prettier
+        "Maple Mono NL"             ;; ( 8/10) Cutesy, Japanese vibes.
         "Terminus"                  ;; ( 7/10) Nice retro font.
         "ProFont IIx Nerd Font"     ;; ( 7/10) Simple, retro-futuristic
         "Iosevka Nerd Font"         ;; ( 7/10) Efficient, skinny, iconic. The Tsoding font.
         "Cousine Nerd Font"         ;; ( 7/10) Highly familiar looking font. Identical as Liberation Mono.
         "Hurmit Nerd Font"          ;; ( 7/10) Unique, Reads okay
-        "Maple Mono NL"             ;; ( 7/10) Cutesy, Japanese vibes.
         "BigBlueTerm437 Nerd Font"  ;; ( 7/10) I think this is the GRUB font. It's iconic
+        "GeistMono Nerd Font"       ;; ( 7/10) Very round and slightly weird, but fine.
         "SF Mono"                   ;; ( 7/10) Solid, similar to JetBrains mono, worse numbers.
-        "AnonymicePro Nerd Font"    ;; ( 7/10) Interesting, similar to Inconsolata but spicier.
         "Overpass Mono"             ;; ( 7/10) Nerd font version is broken
-        "Binchotan_Sharp"           ;; ( 7/10) Small, futuristic, Asian vibes
         "RobotoMono Nerd Font"      ;; ( 7/10) Readable, similar to JetBrains Mono. A bit boring ff.
         "NotoMono Nerd Font"        ;; ( 7/10) Boring, inoffensive. New version of Droid Sans Mono.
         "Monaco"                    ;; ( 7/10) Iconic, boring. Lucida Console?
@@ -69,8 +68,9 @@
         "MonaspiceNe Nerd Font"     ;; ( 7/10) High contrast and readable. Maybe the best Monaspice?
         "MonaspiceRn Nerd Font"     ;; ( 7/10) Nice, handwritten, high contrast and readable.
         "MonaspiceXe Nerd Font"     ;; ( 7/10) Serif, high contrast and readable.
+        "AnonymicePro Nerd Font"    ;; ( 7/10) Interesting, similar to Inconsolata but spicier.
+        "Binchotan_Sharp"           ;; ( 7/10) Small, futuristic, Asian vibes
         "DM Mono"                   ;; ( 6/10) Curvy and round, similar to 0xProto and Geist
-        "GeistMono Nerd Font"       ;; ( 6/10) Very round and slightly weird, but fine.
         "Lekton Nerd Font"          ;; ( 6/10) Light, small, futuristic
         "IosevkaTermSlab Nerd Font" ;; ( 6/10) Interesting variant...
         "EnvyCodeR Nerd Font"       ;; ( 6/10) Not bad...
@@ -240,13 +240,24 @@
 (setq global-auto-revert-non-file-buffers t) ;; Also revert Dired buffers
 
 ;; Kill buffers for deleted files automatically
-;; TODO: fix this, it doesn't work, especially dangerous during LSP mode
+;; Still doesn't work, wtf
 (defun my/kill-buffer-if-file-deleted ()
-  "Kill buffer if its file has been deleted."
+  "Kill buffer if file deleted, stopping LSP first to prevent crashes."
   (when (and buffer-file-name
              (not (file-exists-p buffer-file-name)))
-    (kill-buffer (current-buffer))))
+    ;; Disconnect LSP before killing buffer
+    (when (and (fboundp 'lsp-disconnect) (bound-and-true-p lsp-mode))
+      (ignore-errors (lsp-disconnect)))
+    ;; Force buffer to not be modified
+    (set-buffer-modified-p nil)
+    ;; Kill the buffer
+    (kill-buffer (current-buffer))
+    (message "Killed buffer for deleted file: %s" buffer-file-name)))
+
+;; Check on multiple triggers
 (add-hook 'buffer-list-update-hook #'my/kill-buffer-if-file-deleted)
+(add-hook 'find-file-hook #'my/kill-buffer-if-file-deleted)
+(add-hook 'focus-in-hook #'my/kill-buffer-if-file-deleted)
 
 ;; Set encoding (NOTE: required on Windows only)
 (prefer-coding-system 'utf-8)
@@ -549,9 +560,12 @@
   (evil-leader/set-key "r r" 'my/reload-init)
   (evil-leader/set-key
     "x f" 'find-file
+    "x b" 'switch-to-buffer
     "x k" 'kill-current-buffer)
   (evil-leader/set-key "]" 'centaur-tabs-forward)
   (evil-leader/set-key "[" 'centaur-tabs-backward)
+  (evil-leader/set-key "q" 'centaur-tabs-backward)
+  (evil-leader/set-key "e" 'centaur-tabs-forward)
   (evil-leader/set-key "/" 'comment-line)
   (evil-leader/set-key "o" 'my/toggle-treemacs-focus)
   (evil-leader/set-key
