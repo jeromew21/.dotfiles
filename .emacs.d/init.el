@@ -40,6 +40,7 @@
         "RecMonoLinear Nerd Font"   ;; ( 9/10) Nice font, like Fira but better.
         "0xProto Nerd Font"         ;; ( 9/10) Dyslexic font vibes. Readable, very high x-height, like a better Cascadia Code.
         "FantasqueSansM Nerd Font"  ;; ( 9/10) Small, but nice goofy font.
+        "Sudo Var"                  ;; ( 9/10) Like Iosevka but prettier
         "M+1Code Nerd Font"         ;; ( 9/10) Slightly villainous vibes. Similar to Sudo Var but pointier. Looks better big.
         "IBM Plex Mono"             ;; ( 9/10) Really solid, no notes
         "Inconsolata Nerd Font"     ;; ( 9/10) Another solid all-rounder. Weirdly, it's smaller than the others.
@@ -49,8 +50,8 @@
         "VictorMono Nerd Font"      ;; ( 8/10) Futuristic and thin, nice.
         "JuliaMono"                 ;; ( 8/10) Pretty good. Like 0xProto and Fira but less going on.
         "DepartureMono Nerd Font"   ;; ( 8/10) Nice retro font, very readable but not ugly. Maybe try disabling AA?
-        "Sudo Var"                  ;; ( 8/10) Like Iosevka but prettier
         "Maple Mono NL"             ;; ( 8/10) Cutesy, Japanese vibes.
+        "Noto Sans Mono"        ;; ( 7/10) Boring, inoffensive. New version of Droid Sans Mono.
         "Terminus"                  ;; ( 7/10) Nice retro font.
         "ProFont IIx Nerd Font"     ;; ( 7/10) Simple, retro-futuristic
         "Iosevka Nerd Font"         ;; ( 7/10) Efficient, skinny, iconic. The Tsoding font.
@@ -61,7 +62,6 @@
         "SF Mono"                   ;; ( 7/10) Solid, similar to JetBrains mono, worse numbers.
         "Overpass Mono"             ;; ( 7/10) Nerd font version is broken
         "RobotoMono Nerd Font"      ;; ( 7/10) Readable, similar to JetBrains Mono. A bit boring ff.
-        "NotoMono Nerd Font"        ;; ( 7/10) Boring, inoffensive. New version of Droid Sans Mono.
         "Monaco"                    ;; ( 7/10) Iconic, boring. Lucida Console?
         "MonaspiceAr Nerd Font"     ;; ( 7/10) High contrast and readable.
         "MonaspiceKr Nerd Font"     ;; ( 7/10) Sharp variant, high contrast and readable.
@@ -240,24 +240,20 @@
 (setq global-auto-revert-non-file-buffers t) ;; Also revert Dired buffers
 
 ;; Kill buffers for deleted files automatically
-;; Still doesn't work, wtf
 (defun my/kill-buffer-if-file-deleted ()
-  "Kill buffer if file deleted, stopping LSP first to prevent crashes."
-  (when (and buffer-file-name
-             (not (file-exists-p buffer-file-name)))
-    ;; Disconnect LSP before killing buffer
-    (when (and (fboundp 'lsp-disconnect) (bound-and-true-p lsp-mode))
-      (ignore-errors (lsp-disconnect)))
-    ;; Force buffer to not be modified
-    (set-buffer-modified-p nil)
-    ;; Kill the buffer
-    (kill-buffer (current-buffer))
-    (message "Killed buffer for deleted file: %s" buffer-file-name)))
+  "Kill buffer if its file has been deleted, disconnecting LSP first."
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and buffer-file-name
+                 (not (file-exists-p buffer-file-name)))
+        (when (and (fboundp 'lsp-disconnect) (bound-and-true-p lsp-mode))
+          (ignore-errors (lsp-disconnect)))
+        (set-buffer-modified-p nil)
+        (kill-buffer buf)
+        (message "Killed buffer for deleted file: %s" buffer-file-name)))))
 
 ;; Check on multiple triggers
-(add-hook 'buffer-list-update-hook #'my/kill-buffer-if-file-deleted)
-(add-hook 'find-file-hook #'my/kill-buffer-if-file-deleted)
-(add-hook 'focus-in-hook #'my/kill-buffer-if-file-deleted)
+(run-with-idle-timer 5 t #'my/kill-buffer-if-file-deleted)
 
 ;; Set encoding (NOTE: required on Windows only)
 (prefer-coding-system 'utf-8)
