@@ -15,6 +15,10 @@ NOTE: don't commit anything other than config files.
 - Alacritty
 - Ghostty
 
+# Desktop Environment
+- KDE
+- Gnome
+
 # Theme
 - Solarized Light
 
