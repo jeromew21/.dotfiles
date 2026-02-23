@@ -38,9 +38,20 @@ function fish_prompt
     set_color normal
     echo -n ' '
 
-    # Print git branch in cyan
-    set_color cyan
-    echo -n (fish_git_prompt)
+#   Print git branch in cyan (no parentheses)
+    set branch (git branch --show-current 2>/dev/null)
+    if test -n "$branch"
+        set_color cyan
+        echo -n 'git:'
+        echo -n $branch
+        set_color normal
+        echo -n ' '
+    end
+
+    set_color green
+    echo -n (whoami)
+    echo -n '@'
+    echo -n (prompt_hostname)
     set_color normal
 
     # New line and prompt symbol
