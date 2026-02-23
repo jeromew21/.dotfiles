@@ -21,10 +21,11 @@ NOTE: don't commit anything other than config files.
 
 # Theme
 - Solarized Light
+- Rose Pine Dawn
 
 # Fonts
-- Editor: JetBrains Mono
-- Terminal: JetBrains Mono
+- JetBrains Mono
+- Recursive Mono
 
 NOTE: no ligatures
 

@@ -36,13 +36,13 @@
 ;; Font setup
 (setq my-font-list
       '("JetBrains Mono"            ;; (10/10) Current favorite, all round good.
-        "RecMonoCasual Nerd Font"   ;; ( 9/10) Goofy version of Rec Mono. This might be the one.
-        "RecMonoLinear Nerd Font"   ;; ( 9/10) Nice font, like Fira but better.
-        "0xProto Nerd Font"         ;; ( 9/10) Dyslexic font vibes. Readable, very high x-height, like a better Cascadia Code.
+        "Rec Mono Linear"   ;; ( 9/10) Nice font, like Fira but better.
+        "Rec Mono Casual"   ;; ( 9/10) Goofy version of Rec Mono. This might be the one.
         "FantasqueSansM Nerd Font"  ;; ( 9/10) Small, but nice goofy font.
         "Sudo Var"                  ;; ( 9/10) Like Iosevka but prettier
         "M+1Code Nerd Font"         ;; ( 9/10) Slightly villainous vibes. Similar to Sudo Var but pointier. Looks better big.
         "IBM Plex Mono"             ;; ( 9/10) Really solid, no notes
+        "0xProto Nerd Font"         ;; ( 9/10) Dyslexic font vibes. Readable, very high x-height, like a better Cascadia Code.
         "Inconsolata Nerd Font"     ;; ( 9/10) Another solid all-rounder. Weirdly, it's smaller than the others.
         "Comic Code"                ;; ( 9/10) Good font, but the line height seems wrong on this one on Emacs.
         "Fira Code"                 ;; ( 8/10) Iconic, sharp, wide, to pointy. Very nice on most screens. The Primagen font.
