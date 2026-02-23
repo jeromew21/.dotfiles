@@ -38,7 +38,7 @@ function fish_prompt
     set_color normal
     echo -n ' '
 
-#   Print git branch in cyan (no parentheses)
+    # Print git branch in cyan (no parentheses)
     set branch (git branch --show-current 2>/dev/null)
     if test -n "$branch"
         set_color cyan
@@ -58,12 +58,3 @@ function fish_prompt
     echo
     echo -n '$ '
 end
-
-# Configure git prompt format (optional - customize as needed)
-set -g __fish_git_prompt_show_informative_status 0
-set -g __fish_git_prompt_showdirtystate 0
-set -g __fish_git_prompt_showuntrackedfiles 0
-set -g __fish_git_prompt_showupstream none
-
-# Git prompt colors (to match your zsh config)
-set -g __fish_git_prompt_color_branch cyan
