@@ -12,8 +12,8 @@ NOTE: don't commit anything other than config files.
 - Fish with Vi bindings
 
 # Terminal
-- Alacritty
 - Ghostty
+- Alacritty
 
 # Desktop Environment
 - KDE
@@ -25,3 +25,9 @@ NOTE: don't commit anything other than config files.
 # Fonts
 - Editor: JetBrains Mono
 - Terminal: JetBrains Mono
+
+NOTE: no ligatures
+
+# Issues
+- KDE path and fish path not in sync
+

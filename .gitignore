@@ -2,6 +2,7 @@
 !.gitignore
 !.gitmodules
 !.emacs.d/init.el
+!.config/plasma-workspace/env/path.sh
 !.config/fish/config.fish
 !.config/alacritty/alacritty.toml
 !.config/alacritty/solarized_dark.toml
