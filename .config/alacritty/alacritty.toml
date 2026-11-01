@@ -1,9 +1,9 @@
 [font]
-normal = { family = "JetBrains Mono", style = "Regular" }
-bold = { family = "JetBrains Mono", style = "Bold" }
-italic = { family = "JetBrains Mono", style = "Italic" }
-bold_italic = { family = "JetBrains Mono", style = "Bold Italic" }
-size = 11.0
+normal = { family = "Comic Code", style = "Regular" }
+bold = { family = "Comic Code", style = "Bold" }
+italic = { family = "Comic Code", style = "Italic" }
+bold_italic = { family = "Comic Code", style = "Bold Italic" }
+size = 20.0
 
 [general]
 import = [

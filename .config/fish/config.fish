@@ -1,5 +1,6 @@
 # Fish configuration
 # (This file goes in ~/.config/fish/config.fish)
+# Try not to let install scripts things touch it
 
 set fish_greeting
 
@@ -7,6 +8,7 @@ set fish_greeting
 if test (uname) = Darwin
     fish_add_path /opt/homebrew/bin
     fish_add_path /usr/local/bin
+    fish_add_path ~/.docker/bin
 end
 
 # Linux user binaries
@@ -15,7 +17,7 @@ if test (uname) = Linux
     fish_add_path ~/.cargo/bin
 end
 
-# Alias
+# Aliases
 alias vim='nvim'
 
 # VI mode with cursor shapes

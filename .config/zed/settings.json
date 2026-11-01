@@ -7,16 +7,25 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "agent": {
+    "button": false,
+    "favorite_models": [],
+    "model_parameters": [],
+  },
   "edit_predictions": {
-    "provider": "copilot"
+    "mode": "eager",
+    "provider": "copilot",
   },
   "project_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "autosave": "on_focus_change",
   "buffer_line_height": "comfortable",
   "terminal": {
     "font_family": "JetBrains Mono NL",
+  },
+  "buffer_font_features": {
+    "calt": false,
   },
   "ui_font_family": ".SystemUIFont",
   "telemetry": {
@@ -30,5 +39,5 @@
     "light": "Solarized Light",
     "dark": "Solarized Dark",
   },
-  "buffer_font_family": "JetBrains Mono NL",
+  "buffer_font_family": "Rec Mono Casual",
 }
