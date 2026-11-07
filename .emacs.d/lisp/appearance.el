@@ -23,10 +23,20 @@
 (setq frame-title-format
       (format "Emacs %d.%d - %%b" emacs-major-version emacs-minor-version))
 
-;; Mode line
-(use-package mood-line
+(use-package doom-modeline
   :ensure t
+  :init
+  (setq doom-modeline-height 25
+        doom-modeline-bar-width 3
+        doom-modeline-icon nil
+        doom-modeline-major-mode-icon nil
+        doom-modeline-buffer-file-name-style 'auto
+        doom-modeline-minor-modes nil
+        doom-modeline-buffer-encoding nil
+        doom-modeline-enable-word-count nil)
   :config
-  (mood-line-mode))
+  (doom-modeline-mode 1))
+
+(load-theme 'modus-operandi-tinted t)
 
 (provide 'appearance)

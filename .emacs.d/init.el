@@ -1,3 +1,5 @@
+;;; init.el --- Root configuration -*- lexical-binding: t; -*-
+
 ;; Add configuration directory to load-path
 (add-to-list 'load-path
              (expand-file-name "lisp" user-emacs-directory))
@@ -7,8 +9,6 @@
 (require 'core)
 (require 'appearance)
 (require 'editing)
-;;(require 'completion)
-;;(require 'navigation)
 (require 'programming)
 (require 'keybindings)
 
