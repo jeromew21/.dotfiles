@@ -13,6 +13,9 @@
     "model_parameters": [],
   },
   "edit_predictions": {
+    "copilot": {
+      "enable_next_edit_suggestions": true
+    },
     "mode": "eager",
     "provider": "copilot",
   },
