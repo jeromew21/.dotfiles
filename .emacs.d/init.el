@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;; This is my emacs init file.
 ;; NOTE: reload this with my/reload-init
 ;; TODO: disable bolding
