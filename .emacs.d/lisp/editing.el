@@ -1,7 +1,7 @@
 ;;; editing.el --- Editing configuration -*- lexical-binding: t; -*-
 
 (setq inhibit-startup-screen t)
-(setq initial-scratch-message "hello again...")
+(setq initial-scratch-message "")
 
 (setq inhibit-startup-message t)
 (setq inhibit-startup-echo-area-message t)
@@ -13,6 +13,9 @@
 (global-auto-revert-mode 1)
 
 (recentf-mode 1)
+
+(setq scroll-conservatively 101)
+(setq scroll-margin 3)
 
 (require 'project)
 
@@ -121,5 +124,13 @@
   :ensure t
   :bind
   ("M-g i" . consult-imenu))
+
+(use-package copilot
+  :ensure t
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("C-<tab>" . copilot-accept-completion)
+              ("C-n" . copilot-next-completion)
+              ("C-p" . copilot-previous-completion)))
 
 (provide 'editing)
