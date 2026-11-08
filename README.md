@@ -1,12 +1,10 @@
 # .dotfiles
 My personal dotfiles.
 
-NOTE: don't commit anything other than config files.
+Only bare minimum of config files are committed.
 
 # Editor
-- Emacs (Evil bindings)
-- Zed
-- Neovim
+- Custom Emacs distribution (Evil bindings)
 
 # Shell
 - Fish with Vi bindings
@@ -14,10 +12,6 @@ NOTE: don't commit anything other than config files.
 # Terminal
 - Ghostty
 - Alacritty
-
-# Desktop Environment
-- KDE
-- Gnome
 
 # Theme
 - Solarized Light
@@ -28,7 +22,4 @@ NOTE: don't commit anything other than config files.
 - Recursive Mono
 
 NOTE: no ligatures
-
-# Issues
-- KDE path and fish path not in sync
 

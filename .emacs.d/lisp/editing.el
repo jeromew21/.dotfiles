@@ -19,6 +19,10 @@
 
 (require 'project)
 
+(use-package restart-emacs
+  :ensure t
+  :commands restart-emacs)
+
 (use-package undo-fu :ensure t)
 
 (use-package

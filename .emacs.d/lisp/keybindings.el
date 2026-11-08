@@ -22,9 +22,6 @@
   "SPC"
   #'execute-extended-command
 
-  "/"
-  #'evilnc-comment-or-uncomment-lines
-
   "l"
   '(:ignore t :which-key "lsp")
   "l r"
@@ -120,7 +117,7 @@
   "p s"
   #'project-shell
 
-  "y"
+  "x"
   '(:keymap ctl-x-map :which-key "C-x commands")
 
   "d"
@@ -134,17 +131,17 @@
   "d l"
   #'flymake-show-project-diagnostics
 
-  "e"
-  '(:ignore t :which-key "evaluation")
-  "e c"
+  "c"
+  '(:ignore t :which-key "compilation/evaluation")
+  "c c"
   #'project-compile
-  "e r"
+  "c r"
   #'project-recompile
-  "e k"
+  "c k"
   #'kill-compilation
-  "e b"
+  "c e"
   #'eval-buffer
-  "e d"
+  "c d"
   #'eval-defun
 
   "w"
@@ -186,6 +183,8 @@
   #'describe-char))
 
 (keymap-global-set "<f5>" #'project-recompile)
+
+(keymap-global-set "C-/" #'evilnc-comment-or-uncomment-lines)
 
 (which-key-add-key-based-replacements "SPC SPC" "M-x" "SPC /" "comment/uncomment")
 

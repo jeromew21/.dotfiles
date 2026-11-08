@@ -5,9 +5,10 @@
              (expand-file-name "lisp" user-emacs-directory))
 
 ;; Load configuration modules
-(require 'packages)
 (require 'core)
+(require 'packages)
 (require 'appearance)
+(require 'theme)
 (require 'editing)
 (require 'programming)
 (require 'fonts)
