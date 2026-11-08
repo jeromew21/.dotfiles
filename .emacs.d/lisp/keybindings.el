@@ -89,11 +89,11 @@
   "F c"
   'my/cycle-font
 
-  "g"
+  "G"
   '(:ignore t :which-key "git")
-  "g s"
+  "G s"
   #'magit-status
-  "g d"
+  "G d"
   #'magit-dispatch
 
   "s"

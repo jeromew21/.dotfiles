@@ -20,8 +20,7 @@
 (tool-bar-mode -1)
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
-(setq frame-title-format
-      (format "Emacs %d.%d" emacs-major-version emacs-minor-version))
+(setq frame-title-format "Emacs")
 
 (use-package doom-modeline
   :ensure t
