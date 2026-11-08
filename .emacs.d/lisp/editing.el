@@ -14,6 +14,30 @@
 
 (recentf-mode 1)
 
+(require 'project)
+
+(use-package undo-fu :ensure t)
+
+(use-package
+ evil
+ :ensure t
+ :init
+ (setq evil-undo-system 'undo-fu)
+ (setq evil-want-integration t)
+ :config
+ (evil-mode 1)
+ (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
+
+(use-package
+ evil
+ :ensure t
+ :init
+ (setq evil-undo-system 'undo-fu)
+ (setq evil-want-integration t)
+ :config
+ (evil-mode 1)
+ (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
+
 (use-package
  corfu
  :ensure t
@@ -53,7 +77,6 @@
 (use-package consult :ensure t)
 
 ;; TODO: do we even care about embark?
-;; TODO: integrate into the leader keybindings
 (use-package
  embark
  :ensure t
@@ -80,6 +103,23 @@
 
 (use-package evil-nerd-commenter)
 
-(require 'project)
+(use-package vterm
+  :commands vterm
+  :config
+  ;; Maximize the scrollback buffer size
+  (setq vterm-max-scrollback 10000)
+  )
+
+(use-package imenu-list
+  :ensure t
+  :commands (imenu-list-smart-toggle)
+  :init
+  (setq imenu-list-focus-after-activation t
+        imenu-list-auto-resize nil))
+
+(use-package consult
+  :ensure t
+  :bind
+  ("M-g i" . consult-imenu))
 
 (provide 'editing)

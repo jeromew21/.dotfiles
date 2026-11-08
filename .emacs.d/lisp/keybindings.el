@@ -1,18 +1,6 @@
 ;;; keybindings.el --- Evil and Evil-leader configuration -*- lexical-binding: t; -*-
 
 (use-package
- evil
- :ensure t
- :init
- (setq evil-undo-system 'undo-fu)
- (setq evil-want-integration t)
- :config
- (evil-mode 1)
- (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
-
-(use-package undo-fu :ensure t)
-
-(use-package
  which-key
  :ensure t
  :config
@@ -56,29 +44,6 @@
   "l b"
   #'xref-pop-marker-stack
 
-  "x"
-  '(:ignore t :which-key "emacs")
-  "x f"
-  #'find-file
-  "x x"
-  #'execute-extended-command
-  "x b"
-  #'consult-buffer
-  "x s"
-  #'save-buffer
-  "x d"
-  #'kill-current-buffer
-  "x k"
-  #'kill-buffer
-  "x 0"
-  #'delete-window
-  "x 1"
-  #'delete-other-windows
-  "x 2"
-  #'split-window-below
-  "x 3"
-  #'split-window-right
-
   "b"
   '(:ignore t :which-key "buffers")
   "b b"
@@ -109,6 +74,21 @@
   "f D"
   #'dired-jump
 
+  "F"
+  '(:ignore t :which-key "fonts")
+  "F +"
+  'my/increase-font-size
+  "F -"
+  'my/decrease-font-size
+  "F ="
+  'my/reset-font-size
+  "F ?"
+  'my/show-current-font
+  "F f"
+  'my/set-font-interactive
+  "F c"
+  'my/cycle-font
+
   "g"
   '(:ignore t :which-key "git")
   "g g"
@@ -124,6 +104,8 @@
   #'consult-ripgrep
   "s g"
   #'consult-goto-line
+  "s i"
+  #'consult-imenu
 
   "p"
   '(:keymap project-prefix-map :package project :which-key "project")
@@ -203,8 +185,8 @@
   "h c"
   #'describe-char))
 
-(which-key-add-key-based-replacements
-  "SPC SPC" "M-x"
-  "SPC /" "comment/uncomment")
+(keymap-global-set "<f5>" #'project-recompile)
+
+(which-key-add-key-based-replacements "SPC SPC" "M-x" "SPC /" "comment/uncomment")
 
 (provide 'keybindings)

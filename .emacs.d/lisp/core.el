@@ -15,4 +15,13 @@
 (setq make-backup-files nil
       auto-save-default nil)
 
+(use-package restart-emacs
+  :ensure t
+  :commands restart-emacs)
+
+;; Save all modified files when Emacs loses focus
+(add-hook 'focus-out-hook
+          (lambda ()
+            (save-some-buffers t)))
+
 (provide 'core)

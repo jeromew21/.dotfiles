@@ -10,6 +10,7 @@
 (require 'appearance)
 (require 'editing)
 (require 'programming)
+(require 'fonts)
 (require 'keybindings)
 
 ;; Custom variables
