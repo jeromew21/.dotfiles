@@ -17,7 +17,18 @@
 (setq scroll-conservatively 101)
 (setq scroll-margin 0)
 
+(setq auto-save-visited-interval 5)
+(auto-save-visited-mode 1)
+
 (require 'project)
+
+(use-package super-save
+  :ensure t
+  :config
+  (setq super-save-auto-save-when-idle nil
+        super-save-all-buffers t
+        super-save-silent t)
+  (super-save-mode 1))
 
 (use-package restart-emacs
   :ensure t
@@ -137,7 +148,7 @@
               ("C-n" . copilot-next-completion)
               ("C-p" . copilot-previous-completion)))
 
-;; TODO: if indentations start being off, fix this.
+;; TODO: if auto indentations start being off, fix this.
 (setq copilot-indent-offset-warning-disable t)
 
 (provide 'editing)

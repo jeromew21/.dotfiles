@@ -19,9 +19,4 @@
 (setq make-backup-files nil
       auto-save-default nil)
 
-;; Save all modified files when Emacs loses focus
-(add-hook 'focus-out-hook
-          (lambda ()
-            (save-some-buffers t)))
-
 (provide 'core)

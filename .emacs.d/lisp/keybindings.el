@@ -8,6 +8,17 @@
  (setq which-key-idle-delay 0.2)
  (setq which-key-idle-secondary-delay 0.05))
 
+(defun my/format-buffer ()
+  "Format the current buffer using the appropriate formatter based on the major mode."
+  (interactive)
+  (cond
+   ((derived-mode-p 'python-ts-mode)
+    (my/python-format-buffer))
+   ((derived-mode-p 'emacs-lisp-mode)
+    (elisp-autofmt-buffer))
+   (t
+    (eglot-format-buffer))))
+
 (use-package
  general
  :ensure t
@@ -27,7 +38,7 @@
   "l r"
   #'eglot-rename
   "l f"
-  #'eglot-format-buffer
+  #'my/format-buffer
   "l a"
   #'eglot-code-actions
   "l o"
