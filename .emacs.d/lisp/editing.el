@@ -15,7 +15,7 @@
 (recentf-mode 1)
 
 (setq scroll-conservatively 101)
-(setq scroll-margin 3)
+(setq scroll-margin 0)
 
 (require 'project)
 
@@ -132,5 +132,8 @@
               ("C-<tab>" . copilot-accept-completion)
               ("C-n" . copilot-next-completion)
               ("C-p" . copilot-previous-completion)))
+
+;; TODO: if indentations start being off, fix this.
+(setq copilot-indent-offset-warning-disable t)
 
 (provide 'editing)

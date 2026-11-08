@@ -91,7 +91,7 @@
 
   "g"
   '(:ignore t :which-key "git")
-  "g g"
+  "g s"
   #'magit-status
   "g d"
   #'magit-dispatch
