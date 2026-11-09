@@ -115,6 +115,12 @@
   "s i"
   #'consult-imenu
 
+  "i"
+  #'consult-imenu
+
+  "r"
+  #'project-recompile
+
   "p"
   '(:keymap project-prefix-map :package project :which-key "project")
   "p c"
