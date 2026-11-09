@@ -93,6 +93,7 @@
  :init (marginalia-mode))
 
 (use-package consult :ensure t)
+(setq consult-preview-key nil)
 
 ;; TODO: do we even care about embark?
 (use-package

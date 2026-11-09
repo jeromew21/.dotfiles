@@ -26,7 +26,17 @@
 ;;   ;; `modus-themes-load-random-light').
 ;;   (modus-themes-load-theme 'ef-arbutus))
 
-(use-package solarized-theme :ensure t)
-(load-theme 'solarized-light t)
+;; (use-package solarized-theme :ensure t)
+;; (load-theme 'solarized-light t)
+;; (setq solarized-use-less-bold t)
+
+(use-package
+ doom-themes
+ :ensure t
+ :custom
+ ;; Global settings (defaults)
+ (doom-themes-enable-bold nil) ; if nil, bold is universally disabled
+ (doom-themes-enable-italic nil) ; if nil, italics is universally disabled
+ :config (load-theme 'doom-solarized-light t))
 
 (provide 'theme)

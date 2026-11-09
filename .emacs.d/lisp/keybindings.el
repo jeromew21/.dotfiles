@@ -72,6 +72,8 @@
   "f"
   '(:ignore t :which-key "files")
   "f f"
+  #'project-find-file
+  "f g"
   #'find-file
   "f s"
   #'save-buffer
@@ -198,8 +200,6 @@
   #'describe-package
   "h c"
   #'describe-char))
-
-(keymap-global-set "<f5>" #'project-recompile)
 
 (keymap-global-set "C-/" #'evilnc-comment-or-uncomment-lines)
 

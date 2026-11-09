@@ -10,6 +10,7 @@
 (require 'appearance)
 (require 'theme)
 (require 'editing)
+(require 'debugging)
 (require 'programming)
 (require 'fonts)
 (require 'keybindings)
