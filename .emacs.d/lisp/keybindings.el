@@ -19,187 +19,185 @@
    (t
     (eglot-format-buffer))))
 
-(use-package
- general
- :ensure t
- :config (general-auto-unbind-keys) (general-evil-setup)
+(my-leader
+ "SPC"
+ #'execute-extended-command
 
- (general-define-key
-  :states '(normal motion)
-  :keymaps 'override
-  :prefix "SPC"
-  :global-prefix "C-SPC"
+ "l"
+ '(:ignore t :which-key "lsp")
+ "l r"
+ #'eglot-rename
+ "l f"
+ #'my/format-buffer
+ "l a"
+ #'eglot-code-actions
+ "l o"
+ #'eglot-code-action-organize-imports
+ "l c"
+ #'eglot-reconnect
+ "l d"
+ #'xref-find-definitions
+ "l R"
+ #'xref-find-references
+ "l b"
+ #'xref-pop-marker-stack
 
-  "SPC"
-  #'execute-extended-command
+ "b"
+ '(:ignore t :which-key "buffers")
+ "b b"
+ #'consult-buffer
+ "b n"
+ #'next-buffer
+ "b p"
+ #'previous-buffer
+ "b d"
+ #'kill-current-buffer
+ "b k"
+ #'kill-buffer
+ "b s"
+ #'save-buffer
+ "b r"
+ #'revert-buffer
 
-  "l"
-  '(:ignore t :which-key "lsp")
-  "l r"
-  #'eglot-rename
-  "l f"
-  #'my/format-buffer
-  "l a"
-  #'eglot-code-actions
-  "l o"
-  #'eglot-code-action-organize-imports
-  "l c"
-  #'eglot-reconnect
-  "l d"
-  #'xref-find-definitions
-  "l R"
-  #'xref-find-references
-  "l b"
-  #'xref-pop-marker-stack
+ "f"
+ '(:ignore t :which-key "files")
+ "f f"
+ #'project-find-file
+ "f g"
+ #'find-file
+ "f s"
+ #'save-buffer
+ "f r"
+ #'recentf-open-files
+ "f d"
+ #'dired
+ "f D"
+ #'dired-jump
 
-  "b"
-  '(:ignore t :which-key "buffers")
-  "b b"
-  #'consult-buffer
-  "b n"
-  #'next-buffer
-  "b p"
-  #'previous-buffer
-  "b d"
-  #'kill-current-buffer
-  "b k"
-  #'kill-buffer
-  "b s"
-  #'save-buffer
-  "b r"
-  #'revert-buffer
+ "F"
+ '(:ignore t :which-key "fonts")
+ "F +"
+ 'my/increase-font-size
+ "F -"
+ 'my/decrease-font-size
+ "F ="
+ 'my/reset-font-size
+ "F ?"
+ 'my/show-current-font
+ "F f"
+ 'my/set-font-interactive
+ "F c"
+ 'my/cycle-font
 
-  "f"
-  '(:ignore t :which-key "files")
-  "f f"
-  #'project-find-file
-  "f g"
-  #'find-file
-  "f s"
-  #'save-buffer
-  "f r"
-  #'recentf-open-files
-  "f d"
-  #'dired
-  "f D"
-  #'dired-jump
+ "G"
+ '(:ignore t :which-key "git")
+ "G s"
+ #'magit-status
+ "G d"
+ #'magit-dispatch
 
-  "F"
-  '(:ignore t :which-key "fonts")
-  "F +"
-  'my/increase-font-size
-  "F -"
-  'my/decrease-font-size
-  "F ="
-  'my/reset-font-size
-  "F ?"
-  'my/show-current-font
-  "F f"
-  'my/set-font-interactive
-  "F c"
-  'my/cycle-font
+ "s"
+ '(:ignore t :which-key "search")
+ "s s"
+ #'consult-line
+ "s r"
+ #'consult-ripgrep
+ "s g"
+ #'consult-goto-line
+ "s i"
+ #'consult-imenu
 
-  "G"
-  '(:ignore t :which-key "git")
-  "G s"
-  #'magit-status
-  "G d"
-  #'magit-dispatch
+ "i"
+ #'consult-imenu
 
-  "s"
-  '(:ignore t :which-key "search")
-  "s s"
-  #'consult-line
-  "s r"
-  #'consult-ripgrep
-  "s g"
-  #'consult-goto-line
-  "s i"
-  #'consult-imenu
+ "r"
+ #'project-recompile
 
-  "i"
-  #'consult-imenu
+ "p"
+ '(:keymap project-prefix-map :package project :which-key "project")
+ "p c"
+ #'project-compile
+ "p r"
+ #'project-recompile
+ "p !"
+ #'project-shell-command
+ "p &"
+ #'project-async-shell-command
+ "p s"
+ #'project-shell
 
-  "r"
-  #'project-recompile
+ "x"
+ '(:keymap ctl-x-map :which-key "C-x commands")
 
-  "p"
-  '(:keymap project-prefix-map :package project :which-key "project")
-  "p c"
-  #'project-compile
-  "p r"
-  #'project-recompile
-  "p !"
-  #'project-shell-command
-  "p &"
-  #'project-async-shell-command
-  "p s"
-  #'project-shell
+ "d"
+ '(:ignore t :which-key "diagnostics")
+ "d d"
+ #'flymake-show-buffer-diagnostics
+ "d n"
+ #'flymake-goto-next-error
+ "d p"
+ #'flymake-goto-prev-error
+ "d l"
+ #'flymake-show-project-diagnostics
 
-  "x"
-  '(:keymap ctl-x-map :which-key "C-x commands")
+ "e"
+ '(:ignore t :which-key "evaluation")
+ "e k"
+ #'kill-compilation
+ "e e"
+ #'eval-buffer
+ "e d"
+ #'eval-defun
+ "e x"
+ #'eval-expression
 
-  "d"
-  '(:ignore t :which-key "diagnostics")
-  "d d"
-  #'flymake-show-buffer-diagnostics
-  "d n"
-  #'flymake-goto-next-error
-  "d p"
-  #'flymake-goto-prev-error
-  "d l"
-  #'flymake-show-project-diagnostics
+ "k"
+ #'kill-compilation
 
-  "c"
-  '(:ignore t :which-key "compilation/evaluation")
-  "c c"
-  #'project-compile
-  "c r"
-  #'project-recompile
-  "c k"
-  #'kill-compilation
-  "c e"
-  #'eval-buffer
-  "c d"
-  #'eval-defun
+ "w"
+ '(:ignore t :which-key "windows")
+ "w h"
+ #'windmove-left
+ "w j"
+ #'windmove-down
+ "w k"
+ #'windmove-up
+ "w l"
+ #'windmove-right
+ "w v"
+ #'split-window-right
+ "w s"
+ #'split-window-below
+ "w d"
+ #'delete-window
+ "w o"
+ #'delete-other-windows
+ ;; "w u"
+ ;; #'winner-undo
+ ;; "w r"
+ ;; #'winner-redo
 
-  "w"
-  '(:ignore t :which-key "windows")
-  "w h"
-  #'windmove-left
-  "w j"
-  #'windmove-down
-  "w k"
-  #'windmove-up
-  "w l"
-  #'windmove-right
-  "w v"
-  #'split-window-right
-  "w s"
-  #'split-window-below
-  "w d"
-  #'delete-window
-  "w o"
-  #'delete-other-windows
-  "w u"
-  #'winner-undo
-  "w r"
-  #'winner-redo
+ "a"
+ '(:ignore t :which-key "avy")
+ "a c"
+ #'avy-goto-char
+ "a l"
+ #'avy-goto-line
 
-  "h"
-  '(:ignore t :which-key "help")
-  "h f"
-  #'describe-function
-  "h v"
-  #'describe-variable
-  "h k"
-  #'describe-key
-  "h m"
-  #'describe-mode
-  "h p"
-  #'describe-package
-  "h c"
-  #'describe-char))
+ "h"
+ '(:ignore t :which-key "help")
+ "h f"
+ #'describe-function
+ "h v"
+ #'describe-variable
+ "h k"
+ #'describe-key
+ "h m"
+ #'describe-mode
+ "h p"
+ #'describe-package
+ "h c"
+ #'describe-char)
 
 (keymap-global-set "C-/" #'evilnc-comment-or-uncomment-lines)
 

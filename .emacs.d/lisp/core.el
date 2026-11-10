@@ -6,17 +6,17 @@
 (setq gc-cons-threshold 100000000
       read-process-output-max (* 1024 1024))
 
+
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message "")
+
+(setq inhibit-startup-message t)
+(setq inhibit-startup-echo-area-message t)
+(defun display-startup-echo-area-message ()
+  (message nil))
+
 (setq frame-title-format "Emacs")
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-;; Encoding
-(prefer-coding-system 'utf-8)
-;; (set-default-coding-systems 'utf-8)
-;; (set-language-environment 'utf-8)
-
-;; Backups
-(setq make-backup-files nil
-      auto-save-default nil)
 
 (provide 'core)

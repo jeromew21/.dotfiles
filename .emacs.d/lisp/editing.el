@@ -1,12 +1,21 @@
 ;;; editing.el --- Editing configuration -*- lexical-binding: t; -*-
 
-(setq inhibit-startup-screen t)
-(setq initial-scratch-message "")
+(prefer-coding-system 'utf-8)
+;; (set-default-coding-systems 'utf-8)
+;; (set-language-environment 'utf-8)
 
-(setq inhibit-startup-message t)
-(setq inhibit-startup-echo-area-message t)
-(defun display-startup-echo-area-message ()
-  (message nil))
+(setq
+ make-backup-files nil
+ auto-save-default nil)
+
+(use-package
+ desktop
+ :ensure nil
+ :custom
+ (desktop-save t)
+ (desktop-load-locked-desktop t)
+ (desktop-auto-save-timeout 300)
+ :config (desktop-save-mode 1))
 
 (electric-pair-mode 1)
 
@@ -22,39 +31,48 @@
 
 (require 'project)
 
-(use-package super-save
-  :ensure t
-  :config
-  (setq super-save-auto-save-when-idle nil
-        super-save-all-buffers t
-        super-save-silent t)
-  (super-save-mode 1))
+(use-package
+ super-save
+ :ensure t
+ :config
+ (setq
+  super-save-auto-save-when-idle nil
+  super-save-all-buffers t
+  super-save-silent t)
+ (super-save-mode 1))
 
-(use-package restart-emacs
-  :ensure t
-  :commands restart-emacs)
+(use-package restart-emacs :ensure t :commands restart-emacs)
 
 (use-package undo-fu :ensure t)
 
+;; (setq evil-want-integration t) ; default, but explicit is fine
+;; (setq evil-want-keybinding nil) ; must come BEFORE evil loads
+
 (use-package
  evil
  :ensure t
  :init
+ (setq evil-want-keybinding nil)
  (setq evil-undo-system 'undo-fu)
  (setq evil-want-integration t)
  :config
  (evil-mode 1)
  (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
 
+(use-package evil-collection :after evil :config (evil-collection-init))
+
 (use-package
- evil
+ general
+ :after evil-collection
  :ensure t
- :init
- (setq evil-undo-system 'undo-fu)
- (setq evil-want-integration t)
- :config
- (evil-mode 1)
- (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
+ :config (general-auto-unbind-keys) (general-evil-setup)
+
+ (general-create-definer
+  my-leader
+  :states '(normal motion visual emacs)
+  :keymaps 'override
+  :prefix "SPC"
+  :global-prefix "C-SPC"))
 
 (use-package
  corfu
@@ -117,39 +135,55 @@
 
 (use-package multiple-cursors :ensure t)
 
-(use-package emojify
-  :hook (after-init . global-emojify-mode))
+(use-package emojify :hook (after-init . global-emojify-mode))
 
 (use-package evil-nerd-commenter)
 
-(use-package vterm
-  :commands vterm
-  :config
-  ;; Maximize the scrollback buffer size
-  (setq vterm-max-scrollback 10000)
-  )
+(use-package
+ vterm
+ :commands vterm
+ :config
+ ;; Maximize the scrollback buffer size
+ (setq vterm-max-scrollback 10000))
 
-(use-package imenu-list
-  :ensure t
-  :commands (imenu-list-smart-toggle)
-  :init
-  (setq imenu-list-focus-after-activation t
-        imenu-list-auto-resize nil))
+(use-package
+ imenu-list
+ :ensure t
+ :commands (imenu-list-smart-toggle)
+ :init
+ (setq
+  imenu-list-focus-after-activation t
+  imenu-list-auto-resize nil))
 
-(use-package consult
-  :ensure t
-  :bind
-  ("M-g i" . consult-imenu))
+(use-package consult :ensure t :bind ("M-g i" . consult-imenu))
 
-(use-package copilot
-  :ensure t
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("C-<tab>" . copilot-accept-completion)
-              ("C-n" . copilot-next-completion)
-              ("C-p" . copilot-previous-completion)))
+(use-package inhibit-mouse :ensure nil :config (inhibit-mouse-mode 1))
+
+(use-package
+ copilot
+ :ensure t
+ :hook (prog-mode . copilot-mode)
+ :bind
+ (:map
+  copilot-completion-map
+  ("C-<tab>" . copilot-accept-completion)
+  ("C-n" . copilot-next-completion)
+  ("C-p" . copilot-previous-completion)))
 
 ;; TODO: if auto indentations start being off, fix this.
 (setq copilot-indent-offset-warning-disable t)
+
+(use-package nov :ensure t :mode ("\\.epub\\'" . nov-mode) :config (setq nov-text-width 80))
+(add-hook 'nov-mode-hook #'visual-line-mode)
+(add-hook 'nov-mode-hook (lambda () (display-line-numbers-mode -1)))
+
+(use-package
+ pdf-tools
+ :ensure t
+ :demand t
+ :hook (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
+ :config (pdf-tools-install)
+ (with-eval-after-load 'evil-collection
+   (evil-collection-pdf-setup)))
 
 (provide 'editing)
