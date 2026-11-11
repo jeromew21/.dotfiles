@@ -154,8 +154,6 @@
 
 (use-package consult :ensure t)
 
-(use-package inhibit-mouse :ensure nil :config (inhibit-mouse-mode 1))
-
 (use-package
  copilot
  :ensure t
