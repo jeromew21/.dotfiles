@@ -19,4 +19,16 @@
                       (setq-local tab-width 4)
                       (add-hook 'before-save-hook #'eglot-format-buffer nil t)))))
 
+(use-package zig-mode
+  :ensure t
+  :mode "\\.zig\\'"
+  :hook (zig-mode . eglot-ensure))
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs '(zig-mode . ("zls"))))
+
+(use-package cmake-mode
+  :ensure t
+  :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
+
 (provide 'programming)

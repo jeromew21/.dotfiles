@@ -45,9 +45,6 @@
 
 (use-package undo-fu :ensure t)
 
-;; (setq evil-want-integration t) ; default, but explicit is fine
-;; (setq evil-want-keybinding nil) ; must come BEFORE evil loads
-
 (use-package
  evil
  :ensure t
@@ -155,7 +152,7 @@
   imenu-list-focus-after-activation t
   imenu-list-auto-resize nil))
 
-(use-package consult :ensure t :bind ("M-g i" . consult-imenu))
+(use-package consult :ensure t)
 
 (use-package inhibit-mouse :ensure nil :config (inhibit-mouse-mode 1))
 
@@ -176,6 +173,10 @@
 (use-package nov :ensure t :mode ("\\.epub\\'" . nov-mode) :config (setq nov-text-width 80))
 (add-hook 'nov-mode-hook #'visual-line-mode)
 (add-hook 'nov-mode-hook (lambda () (display-line-numbers-mode -1)))
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'shr-text :family "Times New Roman"
+                                     :height 1.0))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
 
 (use-package
  pdf-tools
