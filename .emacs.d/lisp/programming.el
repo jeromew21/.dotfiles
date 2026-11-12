@@ -31,4 +31,15 @@
   :ensure t
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
 
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+
+;; Compile to PDF by default
+(setq TeX-PDF-mode t)
+
+;; Enable SyncTeX (allows jumping between source and PDF)
+(setq TeX-source-correlate-mode t)
+(setq TeX-source-correlate-start-server t)
+
 (provide 'programming)

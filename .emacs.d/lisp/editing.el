@@ -17,6 +17,13 @@
  (desktop-auto-save-timeout 300)
  :config (desktop-save-mode 1))
 
+;; Only restore some buffers immediately; restore the rest when idle
+(setq desktop-restore-eager 1)
+
+;; Don't save heavy/transient modes in your desktop file
+(setq desktop-modes-not-to-save
+      '(tags-table-mode dired-mode Info-mode info-lookup-mode fundamental-mode))
+
 (electric-pair-mode 1)
 
 (global-auto-revert-mode 1)
@@ -122,7 +129,7 @@
  :after (embark consult)
  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package magit :ensure t)
+(use-package magit :commands (magit-status magit-dispatch magit-file-dispatch))
 
 (use-package treesit-auto :config (global-treesit-auto-mode))
 
@@ -131,8 +138,6 @@
 (use-package expand-region :ensure t)
 
 (use-package multiple-cursors :ensure t)
-
-(use-package emojify :hook (after-init . global-emojify-mode))
 
 (use-package evil-nerd-commenter)
 
@@ -154,6 +159,8 @@
 
 (use-package consult :ensure t)
 
+;; github copilot
+;; TODO: try an alternative w/ Llama local model
 (use-package
  copilot
  :ensure t
@@ -166,23 +173,22 @@
   ("C-p" . copilot-previous-completion)))
 
 ;; TODO: if auto indentations start being off, fix this.
+;; They kind of are off right now
 (setq copilot-indent-offset-warning-disable t)
 
+;; epub reading
 (use-package nov :ensure t :mode ("\\.epub\\'" . nov-mode) :config (setq nov-text-width 80))
 (add-hook 'nov-mode-hook #'visual-line-mode)
 (add-hook 'nov-mode-hook (lambda () (display-line-numbers-mode -1)))
 (defun my-nov-font-setup ()
-  (face-remap-add-relative 'shr-text :family "Times New Roman"
-                                     :height 1.0))
+  (face-remap-add-relative 'shr-text :family "Charter" :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
-(use-package
- pdf-tools
- :ensure t
- :demand t
- :hook (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
- :config (pdf-tools-install)
- (with-eval-after-load 'evil-collection
-   (evil-collection-pdf-setup)))
+(use-package pdf-tools
+  :ensure t
+  :magic ("%PDF" . pdf-view-mode)
+  :hook (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
+  :config
+  (pdf-tools-install :no-query))
 
 (provide 'editing)

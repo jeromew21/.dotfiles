@@ -1,5 +1,10 @@
 ;;; appearance.el --- UI configuration -*- lexical-binding: t; -*-
 
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+(setq frame-title-format "Emacs")
+(setq ns-use-proxy-icon nil)
+
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
@@ -11,11 +16,14 @@
 (setq display-line-numbers-type t
       display-line-numbers-width-start t)
 
+;; Personally, I don't believe in relative line numbers
 (global-display-line-numbers-mode 1)
 
+;; TODO: this whitespace needs to only show in programming modes, not text modes. I need to figure out how to do that.
 (setq-default show-trailing-whitespace t)
 (setq-default fill-column 100)
 
+;; The fill-column-indicator is a nice visual indicator of the fill column, but it can be distracting. I will leave it off for now.
 ;; (global-display-fill-column-indicator-mode 1)
 
 (setq visible-bell t)
@@ -35,6 +43,7 @@
   :config
   (doom-modeline-mode 1))
 
+;; Lotta times this doesn't work, but at least it doesn't show literal ANSI color codes...
 (use-package ansi-color
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter))
