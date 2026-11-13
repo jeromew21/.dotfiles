@@ -17,12 +17,9 @@
  (desktop-auto-save-timeout 300)
  :config (desktop-save-mode 1))
 
-;; Only restore some buffers immediately; restore the rest when idle
 (setq desktop-restore-eager 1)
-
-;; Don't save heavy/transient modes in your desktop file
 (setq desktop-modes-not-to-save
-      '(tags-table-mode dired-mode Info-mode info-lookup-mode fundamental-mode))
+      '(pdf-view-mode nov-mode tags-table-mode dired-mode Info-mode info-lookup-mode fundamental-mode))
 
 (electric-pair-mode 1)
 
@@ -37,6 +34,14 @@
 (auto-save-visited-mode 1)
 
 (require 'project)
+
+;; Automatically kill buffers untouched for 2 days
+(use-package midnight
+  :ensure nil
+  :custom
+  (clean-buffer-list-delay-general 2)
+  :config
+  (midnight-mode 1))
 
 (use-package
  super-save
