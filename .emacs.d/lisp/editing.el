@@ -28,9 +28,11 @@
 
 (use-package recentf
   :ensure nil
-  :hook (after-init . recentf-mode)
+  :init
+  ;; Wait until Emacs is idle for 1s after startup before reading the file
+  (run-with-idle-timer 1 nil #'recentf-mode)
   :custom
-  (recentf-auto-cleanup 'never) ; Never stall startup checking old file paths
+  (recentf-auto-cleanup 'never)
   (recentf-max-saved-items 200)
   (recentf-exclude
    '("/tmp/"
@@ -173,7 +175,7 @@
 
 (use-package multiple-cursors :ensure t :defer t)
 
-(use-package evil-nerd-commenter)
+(use-package evil-nerd-commenter :ensure t :defer t)
 
 (use-package
  vterm
