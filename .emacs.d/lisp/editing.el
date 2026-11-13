@@ -24,8 +24,21 @@
 (electric-pair-mode 1)
 
 (global-auto-revert-mode 1)
+(setq auto-revert-check-vc-info nil)
 
-(recentf-mode 1)
+(use-package recentf
+  :ensure nil
+  :hook (after-init . recentf-mode)
+  :custom
+  (recentf-auto-cleanup 'never) ; Never stall startup checking old file paths
+  (recentf-max-saved-items 200)
+  (recentf-exclude
+   '("/tmp/"
+     "/ssh:"
+     "/sudo:"
+     "eln-cache/"
+     "recentf$"
+     "bookmarks$")))
 
 (setq scroll-conservatively 101)
 (setq scroll-margin 0)
@@ -57,16 +70,32 @@
 
 (use-package undo-fu :ensure t)
 
-(use-package
- evil
- :ensure t
- :init
- (setq evil-want-keybinding nil)
- (setq evil-undo-system 'undo-fu)
- (setq evil-want-integration t)
- :config
- (evil-mode 1)
- (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
+;; (use-package
+;;  evil
+;;  :ensure t
+;;  :init
+;;  (setq evil-want-keybinding nil)
+;;  (setq evil-undo-system 'undo-fu)
+;;  (setq evil-want-integration t)
+;;  :config
+;;  (evil-mode 1)
+;;  (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
+
+;; New evil config
+(use-package evil
+  :ensure t
+  :init
+  ;; Flags read WHILE evil loads (must stay in :init)
+  (setq evil-want-integration t
+        evil-want-keybinding nil
+        evil-disable-insert-state-bindings t ; Skip ~100 Emacs chords in Insert mode
+        evil-want-Y-yank-to-eol t)           ; Make Y yank to end of line (like D and C)
+  :custom
+  ;; Options with :set handlers (evaluated properly via :custom)
+  (evil-undo-system 'undo-fu)
+  (evil-search-module 'evil-search)          ; Proper Vim /search and :noh highlighting
+  :config
+  (evil-mode 1))
 
 (use-package evil-collection :after evil :config (evil-collection-init))
 
@@ -140,9 +169,9 @@
 
 (use-package avy :ensure t)
 
-(use-package expand-region :ensure t)
+(use-package expand-region :ensure t :defer t)
 
-(use-package multiple-cursors :ensure t)
+(use-package multiple-cursors :ensure t :defer t)
 
 (use-package evil-nerd-commenter)
 

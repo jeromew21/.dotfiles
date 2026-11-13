@@ -21,8 +21,8 @@
 ;; Load configuration modules
 (require 'core)
 (require 'packages)
-(require 'appearance)
 (require 'theme)
+(require 'appearance)
 (require 'editing)
 (require 'debugging)
 (require 'programming)

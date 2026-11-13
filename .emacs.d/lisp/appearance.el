@@ -31,17 +31,26 @@
 
 (use-package doom-modeline
   :ensure t
-  :init
-  (setq doom-modeline-height 25
-        doom-modeline-bar-width 3
-        doom-modeline-icon nil
-        doom-modeline-major-mode-icon nil
-        doom-modeline-buffer-file-name-style 'auto
-        doom-modeline-minor-modes nil
-        doom-modeline-buffer-encoding nil
-        doom-modeline-enable-word-count nil)
-  :config
-  (doom-modeline-mode 1))
+  :after doom-themes
+  :hook (window-setup . doom-modeline-mode)
+  :custom
+  ;; Your existing layout & minimal UI settings
+  (doom-modeline-height 25)
+  (doom-modeline-bar-width 3)
+  (doom-modeline-icon nil)
+  (doom-modeline-major-mode-icon nil)
+  (doom-modeline-buffer-file-name-style 'auto)
+  (doom-modeline-minor-modes nil)
+  (doom-modeline-buffer-encoding nil)
+  (doom-modeline-enable-word-count nil)
+
+  ;; Performance & background-check trims
+  (doom-modeline-project-detection 'project)
+  (doom-modeline-check-simple-format t)
+  (doom-modeline-github nil)
+  (doom-modeline-mu4e nil)
+  (doom-modeline-gnus nil)
+  (doom-modeline-irc nil))
 
 ;; Lotta times this doesn't work, but at least it doesn't show literal ANSI color codes...
 (use-package ansi-color
