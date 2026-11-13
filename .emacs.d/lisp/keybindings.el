@@ -107,6 +107,9 @@
  "s i"
  #'consult-imenu
 
+ "g"
+ #'consult-ripgrep
+
  "i"
  #'consult-imenu
 

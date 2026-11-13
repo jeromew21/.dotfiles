@@ -19,28 +19,24 @@
 
 (setq desktop-restore-eager 1)
 (setq desktop-modes-not-to-save
-      '(pdf-view-mode nov-mode tags-table-mode dired-mode Info-mode info-lookup-mode fundamental-mode))
+      '(pdf-view-mode
+        nov-mode tags-table-mode dired-mode Info-mode info-lookup-mode fundamental-mode))
 
 (electric-pair-mode 1)
 
 (global-auto-revert-mode 1)
 (setq auto-revert-check-vc-info nil)
 
-(use-package recentf
-  :ensure nil
-  :init
-  ;; Wait until Emacs is idle for 1s after startup before reading the file
-  (run-with-idle-timer 1 nil #'recentf-mode)
-  :custom
-  (recentf-auto-cleanup 'never)
-  (recentf-max-saved-items 200)
-  (recentf-exclude
-   '("/tmp/"
-     "/ssh:"
-     "/sudo:"
-     "eln-cache/"
-     "recentf$"
-     "bookmarks$")))
+(use-package
+ recentf
+ :ensure nil
+ :init
+ ;; Wait until Emacs is idle for 1s after startup before reading the file
+ (run-with-idle-timer 1 nil #'recentf-mode)
+ :custom
+ (recentf-auto-cleanup 'never)
+ (recentf-max-saved-items 200)
+ (recentf-exclude '("/tmp/" "/ssh:" "/sudo:" "eln-cache/" "recentf$" "bookmarks$")))
 
 (setq scroll-conservatively 101)
 (setq scroll-margin 0)
@@ -51,12 +47,11 @@
 (require 'project)
 
 ;; Automatically kill buffers untouched for 2 days
-(use-package midnight
-  :ensure nil
-  :custom
-  (clean-buffer-list-delay-general 2)
-  :config
-  (midnight-mode 1))
+(use-package
+ midnight
+ :ensure nil
+ :custom (clean-buffer-list-delay-general 2)
+ :config (midnight-mode 1))
 
 (use-package
  super-save
@@ -72,34 +67,23 @@
 
 (use-package undo-fu :ensure t)
 
-;; (use-package
-;;  evil
-;;  :ensure t
-;;  :init
-;;  (setq evil-want-keybinding nil)
-;;  (setq evil-undo-system 'undo-fu)
-;;  (setq evil-want-integration t)
-;;  :config
-;;  (evil-mode 1)
-;;  (define-key evil-normal-state-map (kbd "C-r") #'evil-redo))
+(use-package
+ evil
+ :ensure t
+ :init
+ ;; Flags read WHILE evil loads (must stay in :init)
+ (setq
+  evil-want-integration t
+  evil-want-keybinding nil
+  evil-disable-insert-state-bindings t ; Skip ~100 Emacs chords in Insert mode
+  evil-want-Y-yank-to-eol t) ; Make Y yank to end of line (like D and C)
+ :custom
+ ;; Options with :set handlers (evaluated properly via :custom)
+ (evil-undo-system 'undo-fu)
+ (evil-search-module 'evil-search) ; Proper Vim /search and :noh highlighting
+ :config (evil-mode 1))
 
-;; New evil config
-(use-package evil
-  :ensure t
-  :init
-  ;; Flags read WHILE evil loads (must stay in :init)
-  (setq evil-want-integration t
-        evil-want-keybinding nil
-        evil-disable-insert-state-bindings t ; Skip ~100 Emacs chords in Insert mode
-        evil-want-Y-yank-to-eol t)           ; Make Y yank to end of line (like D and C)
-  :custom
-  ;; Options with :set handlers (evaluated properly via :custom)
-  (evil-undo-system 'undo-fu)
-  (evil-search-module 'evil-search)          ; Proper Vim /search and :noh highlighting
-  :config
-  (evil-mode 1))
-
-(use-package evil-collection :after evil :config (evil-collection-init))
+(use-package evil-collection :ensure t :after evil :config (evil-collection-init))
 
 (use-package
  general
@@ -140,10 +124,11 @@
  (completion-category-defaults nil)
  (completion-category-overrides '((file (styles basic partial-completion)))))
 
-(use-package vertico :init (vertico-mode) :custom (vertico-cycle t))
+(use-package vertico :ensure t :init (vertico-mode) :custom (vertico-cycle t))
 
 (use-package
  marginalia
+ :ensure t
  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
  ;; available in the *Completions* buffer, add it to the
  ;; `completion-list-mode-map'.
@@ -165,9 +150,9 @@
  :after (embark consult)
  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package magit :commands (magit-status magit-dispatch magit-file-dispatch))
+(use-package magit :ensure t :commands (magit-status magit-dispatch magit-file-dispatch))
 
-(use-package treesit-auto :config (global-treesit-auto-mode))
+(use-package treesit-auto :ensure t :config (global-treesit-auto-mode))
 
 (use-package avy :ensure t)
 
@@ -220,11 +205,11 @@
   (face-remap-add-relative 'shr-text :family "Charter" :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
-(use-package pdf-tools
-  :ensure t
-  :magic ("%PDF" . pdf-view-mode)
-  :hook (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
-  :config
-  (pdf-tools-install :no-query))
+(use-package
+ pdf-tools
+ :ensure t
+ :magic ("%PDF" . pdf-view-mode)
+ :hook (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
+ :config (pdf-tools-install :no-query))
 
 (provide 'editing)
