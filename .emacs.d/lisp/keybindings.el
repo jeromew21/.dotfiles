@@ -77,17 +77,21 @@
  "F"
  '(:ignore t :which-key "fonts")
  "F +"
- 'my/increase-font-size
+ #'my/increase-font-size
  "F -"
- 'my/decrease-font-size
+ #'my/decrease-font-size
  "F ="
- 'my/reset-font-size
+ #'my/reset-font-size
  "F ?"
- 'my/show-current-font
+ #'my/show-current-font
  "F f"
- 'my/set-font-interactive
+ #'my/set-font-interactive
  "F c"
- 'my/cycle-font
+ #'my/cycle-font
+ "F r"
+ #'my/random-font
+ "F s"
+ #'my/set-font-size
 
  "G"
  '(:ignore t :which-key "git")
