@@ -13,10 +13,10 @@
               tab-width 4
               indent-tabs-mode nil)
 
-(setq display-line-numbers-type t
-      display-line-numbers-width-start t)
-
 ;; Personally, I don't believe in relative line numbers
+;; Apply globally and before enabling the mode
+(setq-default display-line-numbers-width-start t)
+(setq-default display-line-numbers-grow-only t)
 (global-display-line-numbers-mode 1)
 
 ;; TODO: this whitespace needs to only show in programming modes, not text modes. I need to figure out how to do that.
