@@ -92,7 +92,7 @@
   "Set the font to FONT-NAME if available."
   (when (my/font-installed-p font-name)
     (set-face-attribute 'default nil :family font-name :height (* my-font-size 10))
-    (set-face-attribute 'fixed-pitch nil :family font-name :height 1.0)
+    (set-face-attribute 'fixed-pitch nil :inherit 'default :family font-name :height 1.0)
     (setq my-current-font-family font-name)
     (my/save-font-state)
     (message "Font set to: %s" font-name)
