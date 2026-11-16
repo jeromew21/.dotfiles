@@ -137,6 +137,8 @@
 
 (use-package consult :ensure t)
 (setq consult-preview-key nil)
+(with-eval-after-load 'consult
+  (add-to-list 'consult-buffer-filter "\\`\\*.*\\*\\'"))
 
 ;; TODO: do we even care about embark?
 (use-package

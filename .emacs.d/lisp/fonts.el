@@ -9,6 +9,7 @@
 
         "Comic Code"
         "Rec Mono Casual"
+        "Sligoil"
         "Annotation Mono"
         "Rec Mono Linear"
         "0xProto"
@@ -19,10 +20,11 @@
 
         "SF Mono"
         "Roboto Mono"
-        "Commit Mono"
+        "CommitMono"
 
         "Geist Mono"
         "DM Mono"
+        "Paper Mono"
         "Mona Sans Mono"
         "Anonymous Pro"
         "Overpass Mono"

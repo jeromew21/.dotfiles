@@ -20,7 +20,10 @@
 (global-display-line-numbers-mode 1)
 
 ;; TODO: this whitespace needs to only show in programming modes, not text modes. I need to figure out how to do that.
-(setq-default show-trailing-whitespace t)
+;; (setq-default show-trailing-whitespace t)
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (setq show-trailing-whitespace t)))
 (setq-default fill-column 100)
 
 ;; The fill-column-indicator is a nice visual indicator of the fill column, but it can be distracting. I will leave it off for now.
