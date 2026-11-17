@@ -56,11 +56,19 @@
   (doom-modeline-irc nil))
 
 ;; Lotta times this doesn't work, but at least it doesn't show literal ANSI color codes...
-(use-package ansi-color
-  :ensure nil
-  :hook (compilation-filter . ansi-color-compilation-filter))
+;; (use-package ansi-color
+;;   :ensure nil
+;;   :hook (compilation-filter . ansi-color-compilation-filter))
 
-;; Preserve compilation output colors
+;; ;; Preserve compilation output colors
+;; (setq compilation-scroll-output 'first-error)
+(use-package xterm-color
+  :ensure t
+  :init
+  (setq compilation-environment '("TERM=xterm-256color" "CLICOLOR_FORCE=1" "FORCE_COLOR=1"))
+  (define-advice compilation-filter (:around (orig-fn proc string) xterm-color)
+    (funcall orig-fn proc (xterm-color-filter string))))
+
 (setq compilation-scroll-output 'first-error)
 
 (provide 'appearance)
