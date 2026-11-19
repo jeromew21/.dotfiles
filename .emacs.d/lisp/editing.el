@@ -186,7 +186,6 @@
 ;; TODO: try an alternative w/ Llama local model
 (use-package
  copilot
- :ensure t
  :hook (prog-mode . copilot-mode)
  :bind
  (:map
@@ -200,7 +199,7 @@
 (setq copilot-indent-offset-warning-disable t)
 
 ;; epub reading
-(use-package nov :ensure t :mode ("\\.epub\\'" . nov-mode) :config (setq nov-text-width 80))
+(use-package nov :mode ("\\.epub\\'" . nov-mode) :config (setq nov-text-width 80))
 (add-hook 'nov-mode-hook #'visual-line-mode)
 (add-hook 'nov-mode-hook (lambda () (display-line-numbers-mode -1)))
 (defun my-nov-font-setup ()
@@ -209,7 +208,6 @@
 
 (use-package
  pdf-tools
- :ensure t
  :magic ("%PDF" . pdf-view-mode)
  :hook (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
  :config (pdf-tools-install :no-query))
