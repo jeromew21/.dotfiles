@@ -21,12 +21,14 @@
     (my/load-doom-theme next)
     (message "Theme: %s" next)))
 
-(use-package doom-themes
-  :ensure t
-  :custom
-  (doom-themes-enable-bold nil)
-  (doom-themes-enable-italic nil)
-  :config
-  (my/load-doom-theme 'doom-solarized-light))
+(use-package
+ doom-themes
+ :ensure t
+ :custom
+ (doom-themes-enable-bold nil)
+ (doom-themes-enable-italic nil)
+ :config
+ (my/load-doom-theme 'doom-solarized-light)
+ (set-face-attribute 'font-lock-comment-face nil :slant 'italic))
 
 (provide 'theme)

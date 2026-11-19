@@ -19,6 +19,7 @@
         "Monaspace Argon"
 
         "SF Mono"
+        "Input Mono"
         "Roboto Mono"
         "CommitMono"
 
@@ -32,6 +33,7 @@
         "Martian Mono"
         "Fragment Mono"
         "Space Mono"
+        "Azeret Mono"
 
         "IBM Plex Mono"
         "Fira Code"
@@ -43,6 +45,7 @@
 
         "Inconsolata"
         "Code Saver"
+        "Consolas"
         "Sometype Mono"
         "Atkinson Hyperlegible Mono"
         "Source Code Pro"
@@ -52,11 +55,12 @@
         "Monaspace Xenon"
         "TeX Gyre Cursor"
         "Courier Prime"
+        "Courier Prime Code"
 
         "Victor Mono"
         "Lekton"
         "PT Mono"
-        "Andale Mono"
+        "Ubuntu Mono"
 
         "Menlo"
         "DejaVu Sans Mono"

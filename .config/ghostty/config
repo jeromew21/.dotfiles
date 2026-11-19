@@ -38,5 +38,8 @@
 # resize-overlay-duration = 4s 200ms
 
 theme = solarized-light
-font-family = Comic Code
-font-size = 12
+font-family = Lyth Mono
+font-size = 20
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig

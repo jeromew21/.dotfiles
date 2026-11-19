@@ -71,4 +71,25 @@
 
 (setq compilation-scroll-output 'first-error)
 
+;; Ligatures... gasp!
+;; Here in case I want to distribute this config to others.
+(use-package ligature
+  :ensure t
+  :config
+
+  ;; (ligature-set-ligatures 'prog-mode
+  ;;                         '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+  ;;                           ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+  ;;                           "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+  ;;                           "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+  ;;                           "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^="
+  ;;                           "$>" "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+  ;;                           "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+  ;;                           "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+  ;;                           "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+  ;;                           "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+
+  ;; Enable ligature checks globally across configured modes
+  (global-ligature-mode nil))
+
 (provide 'appearance)
