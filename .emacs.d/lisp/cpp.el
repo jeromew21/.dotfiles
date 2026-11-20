@@ -1,4 +1,4 @@
-;;; cpp.el --- C++ configuration -*- lexical-binding: t; -*-
+;;; cpp.el --- C/C++ configuration -*- lexical-binding: t; -*-
 
 ;; Tree-sitter
 (setq treesit-font-lock-level 4)
