@@ -14,6 +14,7 @@
 
 ;; Eglot
 (add-hook 'c++-ts-mode-hook #'eglot-ensure)
+(add-hook 'c-mode-hook #'eglot-ensure)
 
 (setq eglot-ignored-server-capabilities
       '(:inlayHintProvider))
