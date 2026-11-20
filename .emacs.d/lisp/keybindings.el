@@ -110,6 +110,10 @@
  #'consult-goto-line
  "s i"
  #'consult-imenu
+ "s I"
+ #'consult-imenu-multi
+ "s g"
+ #'consult-eglot-symbols
 
  "g"
  #'consult-ripgrep

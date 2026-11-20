@@ -140,6 +140,9 @@
 (with-eval-after-load 'consult
   (add-to-list 'consult-buffer-filter "\\`\\*.*\\*\\'"))
 
+;; Search project for symbols using eglot and consult
+(use-package consult-eglot :ensure t :after (eglot consult))
+
 ;; TODO: do we even care about embark?
 (use-package
  embark
@@ -184,32 +187,101 @@
 
 ;; github copilot
 ;; TODO: try an alternative w/ Llama local model
+(defvar my/copilot-warned nil)
+
+(defun my/copilot-ready-p ()
+  "Return non-nil if the Copilot language server or Node.js is available."
+  (or (and (fboundp 'copilot--server-executable)
+           (ignore-errors
+             (copilot--server-executable)))
+      (executable-find "copilot-language-server") (executable-find "node")))
+
+(defun my/enable-copilot-if-ready ()
+  "Enable `copilot-mode' only if `copilot' and its server/Node.js exist."
+  (if (and (require 'copilot nil t) (my/copilot-ready-p))
+      (copilot-mode 1)
+    (unless my/copilot-warned
+      (setq my/copilot-warned t)
+      (message
+       "[config] copilot disabled: run M-x copilot-install-server (or install Node.js 22+ & npm)."))))
+
 (use-package
  copilot
- :hook (prog-mode . copilot-mode)
+ :ensure t
+ :defer t
+ :init
+ ;; TODO: if auto indentations start being off, fix this.
+ ;; They kind of are off right now
+ (setq copilot-indent-offset-warning-disable t)
+ (add-hook 'prog-mode-hook #'my/enable-copilot-if-ready)
  :bind
  (:map
   copilot-completion-map
   ("C-<tab>" . copilot-accept-completion)
   ("C-n" . copilot-next-completion)
-  ("C-p" . copilot-previous-completion)))
-
-;; TODO: if auto indentations start being off, fix this.
-;; They kind of are off right now
-(setq copilot-indent-offset-warning-disable t)
+  ("C-p" . copilot-previous-completion))
+ :catch
+ (lambda (_keyword err)
+   (message "[config] copilot package failed to load: %s" (error-message-string err))))
 
 ;; epub reading
-(use-package nov :mode ("\\.epub\\'" . nov-mode) :config (setq nov-text-width 80))
-(add-hook 'nov-mode-hook #'visual-line-mode)
-(add-hook 'nov-mode-hook (lambda () (display-line-numbers-mode -1)))
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'shr-text :family "Charter" :height 1.0))
-(add-hook 'nov-mode-hook 'my-nov-font-setup)
 
-(use-package
- pdf-tools
- :magic ("%PDF" . pdf-view-mode)
- :hook (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
- :config (pdf-tools-install :no-query))
+(if (and (executable-find "unzip") (fboundp 'libxml-parse-html-region))
+    (use-package
+     nov
+     :ensure t
+     :mode ("\\.epub\\'" . nov-mode)
+     :hook
+     ((nov-mode . visual-line-mode)
+      (nov-mode . my-nov-font-setup)
+      (nov-mode . (lambda () (display-line-numbers-mode -1))))
+     :config (setq nov-text-width 80)
+     :catch
+     (lambda (_keyword err)
+       (message "[config] nov package failed to load: %s" (error-message-string err))))
+  (message
+   "[config] nov disabled: install `unzip' (and ensure Emacs has libxml2 support) to read EPUB files."))
+
+;; pdf reading
+(defun my/pdf-tools-deps-ready-p ()
+  "Return non-nil if `epdfinfo' exists or C/C++ build tools are available."
+  (or (executable-find "epdfinfo")
+      (and (executable-find "make")
+           (executable-find "pkg-config")
+           (or (executable-find "gcc") (executable-find "clang")))))
+
+(if (my/pdf-tools-deps-ready-p)
+    (use-package
+     pdf-tools
+     :ensure t
+     :magic ("%PDF" . pdf-view-mode)
+     :hook
+     ((pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
+      (pdf-view-mode
+       .
+       (lambda ()
+         (when (fboundp 'pdf-view-roll-minor-mode)
+           (pdf-view-roll-minor-mode 1)))))
+     :custom
+     ;; Visual gap between pages in continuous scroll mode
+     (pdf-roll-vertical-margin 8) (pdf-roll-margin-color "gray30")
+     :config
+     (condition-case err
+         (pdf-tools-install :no-query nil t)
+       (error
+        (message
+         "[config] pdf-tools server build failed (%s). Install `libpoppler-glib-dev', `zlib1g-dev', `autoconf', and `automake'."
+         (error-message-string err))))
+     :catch
+     (lambda (_keyword err)
+       (message "[config] pdf-tools package failed to load: %s" (error-message-string err))))
+  (message
+   "[config] pdf-tools disabled: install `epdfinfo' or build tools (`make', `pkg-config', `gcc'/`clang', `libpoppler-glib-dev', `zlib1g-dev')."))
+
+;; Optional: enables smooth pixel-by-pixel trackpad/mouse-wheel scrolling
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode 1))
 
 (provide 'editing)
